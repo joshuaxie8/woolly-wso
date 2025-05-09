@@ -48,10 +48,23 @@ public class BKTree<T, Data> implements Tree<T> {
 	// adds a new node to the BK-tree
 	public void insert(T value) {
 		insert(new Node(value));
-
 	}
 	public void insert(Node node) {
+		if (isEmpty()) { // initial node
+			root = node;
+			size++;
+			return;
+		}
 
+		Node current = root;
+		int dist = c.compute(current.value, node.value);
+
+		while (current.children.containsKey(dist)) {
+			current = current.children.get(dist);
+			dist = c.compute(current.value, node.value);
+		}
+		current.children.put(dist, node);
+		size++;
 	}
 
 	// removes a node from the BK-tree - returns true if deletion is successful
@@ -71,8 +84,36 @@ public class BKTree<T, Data> implements Tree<T> {
 		return new ArrayList<Node>();
 	}
 
+	ArrayList<T> traverse() {
+		ArrayList<T> result = new ArrayList<T>();
+		traverseHelper(root, result);
+		return result;
+	}
+
+	private void traverseHelper(Node node, ArrayList<T> result) {
+		if (node == null) return;
+
+		result.add(node.value);
+
+		for (Node child : node.children.values()) {
+			traverseHelper(child, result);
+		}
+	}
+
 	public static void main(String[] args) {
-		// test cases here
-		BKTree tests = new BKTree<String, Integer>(MetricFunctions.Lev);
+		// test cases
+		// BKTree<String,Integer> tests = new BKTree<String, Integer>(MetricFunctions.Lev);
+		// tests.insert("book");
+		// tests.insert("cake");
+		// tests.insert("books");
+		// tests.insert("boo");
+		// tests.insert("cape");
+		// tests.insert("cart");
+		// tests.insert("boon");
+		// tests.insert("cook");
+		// ArrayList<String> names = tests.traverse();
+		// for (String name : names) {
+		// 	System.out.println(name);
+		// }
 	}
 }

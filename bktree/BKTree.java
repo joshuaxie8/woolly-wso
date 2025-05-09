@@ -18,9 +18,9 @@ public class BKTree<T, Data> implements Tree<T> {
 
 	private Node root;
 	private int size = 0;
-	private Comparator<T> c; // a BK-tree comparator must return a range of integer values, not just -1, 0, and 1
+	private DistanceMetric<T> c; // a BK-tree "comparator" must return a range of integer values, not just -1, 0, and 1
 
-	public BKTree(Comparator<T> comparator) {
+	public BKTree(DistanceMetric<T> comparator) {
 		c = comparator;
 	}
 
@@ -47,7 +47,8 @@ public class BKTree<T, Data> implements Tree<T> {
 
 	// adds a new node to the BK-tree
 	public void insert(T value) {
-		Node node = new Node(value);
+		insert(new Node(value));
+
 	}
 	public void insert(Node node) {
 
@@ -72,5 +73,6 @@ public class BKTree<T, Data> implements Tree<T> {
 
 	public static void main(String[] args) {
 		// test cases here
+		BKTree tests = new BKTree<String, Integer>(MetricFunctions.Lev);
 	}
 }

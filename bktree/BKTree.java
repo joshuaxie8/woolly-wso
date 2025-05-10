@@ -102,6 +102,7 @@ public class BKTree<T, Data> implements Tree<T> {
 		if (parent != null) {
 
 		}
+		return false;
 	}
 
 	private void reinsertSubtree(Node node) {

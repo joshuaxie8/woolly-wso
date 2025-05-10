@@ -33,10 +33,33 @@ public class BKTree<T, Data> implements Tree<T> {
 		return size;
 	}
 
+	public boolean containsHelper(Node node, T val) {
+		int dist = c.compute(node.value, val);
+
+		if (dist == 0) {
+			return true;
+		}
+
+		Node child = node.children.get(dist);
+
+		if (child != null) {
+			return containsHelper(child, val);
+		}
+
+		return false;
+
+	}
+
 	// whether or not the BK-tree contains an exact match to our value
 	// if an exact match exists, find all prefix matches using a trie or similar data structure
 	public boolean contains(T value) {
-		return false;
+		if (isEmpty()) {
+			return false;
+		}
+
+		Node curr = root;
+
+		return containsHelper(curr, value);
 	}
 
 	// gets the node corresponding to the given value; returns null if no match is found
@@ -101,19 +124,21 @@ public class BKTree<T, Data> implements Tree<T> {
 	}
 
 	public static void main(String[] args) {
-		// test cases
-		// BKTree<String,Integer> tests = new BKTree<String, Integer>(MetricFunctions.Lev);
-		// tests.insert("book");
-		// tests.insert("cake");
-		// tests.insert("books");
-		// tests.insert("boo");
-		// tests.insert("cape");
-		// tests.insert("cart");
-		// tests.insert("boon");
-		// tests.insert("cook");
-		// ArrayList<String> names = tests.traverse();
-		// for (String name : names) {
-		// 	System.out.println(name);
-		// }
+		//test cases
+		BKTree<String,Integer> tests = new BKTree<String, Integer>(MetricFunctions.Lev);
+		tests.insert("book");
+		tests.insert("cake");
+		tests.insert("books");
+		tests.insert("boo");
+		tests.insert("cape");
+		tests.insert("cart");
+		tests.insert("boon");
+		tests.insert("cook");
+		ArrayList<String> names = tests.traverse();
+		for (String name : names) {
+			System.out.println(name);
+		}
+
+		System.out.println("CONTAINS: " + tests.contains("bool"));
 	}
 }

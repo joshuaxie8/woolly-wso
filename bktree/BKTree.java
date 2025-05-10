@@ -4,13 +4,13 @@ import java.util.*;
 
 public class BKTree<T, Data> implements Tree<T> {
 	private class Node {
-		T value;
-		Data data;
+		T value; // key
+		Data data; // value
 		Map<Integer, Node> children = new HashMap<>();
 
 		// TO-DO: implement storage of individual data in hash map outside of bk-tree
 		// (good for actual implementation to WSO database)
-		// data field may not be necessary
+		// thus data field may not be necessary
 		public Node(T value) {
 			this.value = value;
 		}
@@ -67,12 +67,48 @@ public class BKTree<T, Data> implements Tree<T> {
 		size++;
 	}
 
-	// removes a node from the BK-tree - returns true if deletion is successful
+	/*
+	Removes a node from the BK-tree - returns true if deletion is successful
+	IMPORTANT: deletion in BK-trees is complicated, expensive and thus ideally rare
+	In terms of WSO search, we shouldn't need to remove people after loading the BK-tree
+
+	Deletes the node, then recursively reinserts child subtrees
+	*/
 	public boolean delete(T value) {
-		return contains(value);
+		// INCOMPLETE
+		if (root == null) return false; // if tree is empty
+
+		if (root.value.equals(value)) { // special logic for deleting root
+			Node old = root;
+			root = null;
+			size = 0;
+			for (Node child : old.children.values()) {
+				reinsertSubtree(child);
+			}
+			return true;
+		}
+
+		return deleteHelper(null, root, value); // normal case
 	}
 
-	// updates a node - in practice just removes the old node and inserts one with the new value
+	// recursive delete method
+	private boolean deleteHelper(Node parent, Node current, T value) {
+		// INCOMPLETE
+		int dist = c.compute(current.value, value);
+
+		Node target	= current.children.get(dist);
+		if (target == null) return false;
+
+		if (parent != null) {
+
+		}
+	}
+
+	private void reinsertSubtree(Node node) {
+		// INCOMPLETE
+	}
+
+	// updates a node - in practice just removes the old node and inserts one with the new key
 	// returns true if edit is successful
 	public boolean update(Node node, T newValue) {
 		return false;
@@ -102,18 +138,19 @@ public class BKTree<T, Data> implements Tree<T> {
 
 	public static void main(String[] args) {
 		// test cases
-		// BKTree<String,Integer> tests = new BKTree<String, Integer>(MetricFunctions.Lev);
-		// tests.insert("book");
-		// tests.insert("cake");
-		// tests.insert("books");
-		// tests.insert("boo");
-		// tests.insert("cape");
-		// tests.insert("cart");
-		// tests.insert("boon");
-		// tests.insert("cook");
-		// ArrayList<String> names = tests.traverse();
-		// for (String name : names) {
-		// 	System.out.println(name);
-		// }
+		BKTree<String,Integer> tests = new BKTree<String, Integer>(MetricFunctions.Lev);
+		tests.insert("book");
+		tests.insert("cake");
+		tests.insert("books");
+		tests.insert("boo");
+		tests.insert("cape");
+		tests.insert("cart");
+		tests.insert("boon");
+		tests.insert("cook");
+		ArrayList<String> names = tests.traverse();
+		for (String name : names) {
+			System.out.println(name);
+		}
+		System.out.println(tests.size());
 	}
 }

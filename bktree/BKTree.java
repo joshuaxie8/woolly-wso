@@ -33,16 +33,63 @@ public class BKTree<T, Data> implements Tree<T> {
 		return size;
 	}
 
+	public boolean containsHelper(Node node, T val) {
+		int dist = c.compute(node.value, val);
+
+		if (dist == 0) {
+			return true;
+		}
+
+		Node child = node.children.get(dist);
+
+		if (child != null) {
+			return containsHelper(child, val);
+		}
+
+		return false;
+
+	}
+
 	// whether or not the BK-tree contains an exact match to our value
 	// if an exact match exists, find all prefix matches using a trie or similar data structure
 	public boolean contains(T value) {
-		return false;
+		if (isEmpty()) {
+			return false;
+		}
+
+		Node curr = root;
+
+		return containsHelper(curr, value);
+	}
+
+	private Node getHelper(Node node, T val) {
+		int dist = c.compute(node.value, val);
+
+		if (dist == 0) {
+			return node;
+		}
+
+		Node child = node.children.get(dist);
+
+		if (child != null) {
+			return getHelper(child, val);
+		}
+
+		return null;
+
 	}
 
 	// gets the node corresponding to the given value; returns null if no match is found
 	// return type is TBD - currently Node for generalizability
 	public Node get(T value) {
-		return null;
+		if (isEmpty()) {
+			return null;
+
+		}
+
+		Node curr = root;
+
+		return getHelper(curr, value);
 	}
 
 	// adds a new node to the BK-tree
@@ -138,7 +185,7 @@ public class BKTree<T, Data> implements Tree<T> {
 	}
 
 	public static void main(String[] args) {
-		// test cases
+		//test cases
 		BKTree<String,Integer> tests = new BKTree<String, Integer>(MetricFunctions.Lev);
 		tests.insert("book");
 		tests.insert("cake");
@@ -152,6 +199,7 @@ public class BKTree<T, Data> implements Tree<T> {
 		for (String name : names) {
 			System.out.println(name);
 		}
-		System.out.println(tests.size());
+
+		System.out.println("GET: " + tests.get("cook").value);
 	}
 }

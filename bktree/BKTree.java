@@ -115,14 +115,13 @@ public class BKTree<T, Data> implements Tree<T> {
 	}
 
 	/*
-	Removes a node from the BK-tree - returns true if deletion is successful
+	Removes a node from the BK-tree - returns true if deletion is successful and false if not
 	IMPORTANT: deletion in BK-trees is complicated, expensive and thus ideally rare
 	In terms of WSO search, we shouldn't need to remove people after loading the BK-tree
 
 	Deletes the node, then recursively reinserts child subtrees
 	*/
 	public boolean delete(T value) {
-		// INCOMPLETE
 		if (root == null) return false; // if tree is empty
 
 		if (root.value.equals(value)) { // special logic for deleting root
@@ -130,12 +129,11 @@ public class BKTree<T, Data> implements Tree<T> {
 			root = null;
 			size = 0;
 			for (Node child : old.children.values()) {
-				reinsertSubtree(child);
+				reinsertSubtree(child); // puts children back into tree
 			}
 			return true;
 		}
-
-		return deleteHelper(null, root, value); // normal case
+		return deleteHelper(null, root, value); // normal case - node is NOT the root
 	}
 
 	// recursive delete method
@@ -143,22 +141,43 @@ public class BKTree<T, Data> implements Tree<T> {
 		// INCOMPLETE
 		int dist = c.compute(current.value, value);
 
-		Node target	= current.children.get(dist);
-		if (target == null) return false;
+		Node target	= current.children.get(dist); // target is a child of current
+		if (target == null) return false; 	// node is missing
 
-		if (parent != null) {
+		if (target.value.equals(value)) { 	// if node is found
+			current.children.remove(dist);	// remove hash map reference
+			int oldSize = size;
 
+			for (Node child : target.children.values()) { // reinserts children
+				reinsertSubtree(child);
+			}
+			size = oldSize - 1;
+			return true;
 		}
-		return false;
+		else { // keep recursing
+			return deleteHelper(current, target, value);
+		}
 	}
 
+	// so slow, wow
 	private void reinsertSubtree(Node node) {
-		// INCOMPLETE
+		for (Node child : node.children.values()) {
+			reinsertSubtree(child);
+		}
+		node.children.clear();
+		insert(node);
 	}
 
 	// updates a node - in practice just removes the old node and inserts one with the new key
 	// returns true if edit is successful
-	public boolean update(Node node, T newValue) {
+	public boolean update(T oldValue, T newValue) {
+		Node result = get(oldValue);
+		if (result != null) { // if value exists
+			delete(result.value);
+			result.value = newValue;
+			insert(result);
+			return true;
+		}
 		return false;
 	}
 
@@ -195,11 +214,16 @@ public class BKTree<T, Data> implements Tree<T> {
 		tests.insert("cart");
 		tests.insert("boon");
 		tests.insert("cook");
+
+		System.out.println("GET: " + tests.get("cook").value);
+		System.out.println(tests.delete("book"));
+		System.out.println(tests.delete("book"));
+		tests.update("cook", "gurt");
+
 		ArrayList<String> names = tests.traverse();
+		System.out.println("Printing tree:"); // weird bug where 'books' appears twice
 		for (String name : names) {
 			System.out.println(name);
 		}
-
-		System.out.println("GET: " + tests.get("cook").value);
 	}
 }

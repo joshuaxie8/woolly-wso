@@ -37,6 +37,10 @@ public class People {
 
 			People allPeople = new People();
 
+			for (int i = 0; i < allPeople.peopleList.size(); i++) {
+				System.out.println("First Name: " + allPeople.peopleList.get(i).getFirstName() + " | Middle Name: " + allPeople.peopleList.get(i).getMiddleName() + " | Last Name: " + allPeople.peopleList.get(i).getLastName());
+			}
+
 			
 		}
 

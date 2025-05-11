@@ -14,7 +14,8 @@ public interface Tree<T> {
 	public abstract boolean contains(T value);
 
 	// inserts a new value into the tree
-	public abstract void insert(T value);
+	// returns false if value already exists
+	public abstract boolean insert(T value);
 
 	// removes a value from a tree
 	// true if deletion is successful

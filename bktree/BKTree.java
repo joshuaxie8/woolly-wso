@@ -193,7 +193,7 @@ public class BKTree<T, Data> implements Tree<T> {
 		return new ArrayList<Node>();
 	}
 
-	ArrayList<T> traverse() {
+	public ArrayList<T> traverse() {
 		ArrayList<T> result = new ArrayList<T>();
 		traverseHelper(root, result);
 		return result;

@@ -7,10 +7,10 @@ public class Person {
 
 
 
-		private String fullName;
-		private String firstName;
-		private String lastName;
-		private String middleName;
+		private String fullName = "";
+		private String firstName = "";
+		private String lastName = "";
+		private String middleName = "";
 		private int classYear;
 
 		public Person(String name) {
@@ -34,17 +34,20 @@ public class Person {
 		if (splitFullName.length == 2) { // first and last name
 			firstName = splitFullName[0];
 			lastName = splitFullName[1];
+			return;
 		}
 
 		if (splitFullName.length == 3 && (splitFullName[1].contains(".") || splitFullName[1].length() == 1)) { //case for traditional middle name
 			firstName = splitFullName[0];
 			middleName = splitFullName[1];
 			lastName = splitFullName[2];
+			return;
 		}
 
 		if (splitFullName[0].length() <= 2 && splitFullName.length > 2) { // special case where people have 1-2 charecter first names (ex. M, J., etc.)
 			firstName = splitFullName[0] + " " + splitFullName[1];
 			lastName = splitFullName [2];
+			return;
 		}
 
 		// find with .
@@ -61,7 +64,7 @@ public class Person {
 				
 
 				for (int j = 0; j < i; j++) {
-					if (firstName != "") {
+					if (!firstName.equals("")) {
 						firstName += (" " + splitFullName[j]);
 					} else {
 						firstName += splitFullName[j];
@@ -70,7 +73,7 @@ public class Person {
 				}
 
 				for (int k = i + 1; k < splitFullName.length; k++) { // then if found check the rest for Jr., III, II, etc. and get rid of that for the last name, put everything else afterwords 
-					if (splitFullName[k] != "Jr." || splitFullName[k] != "I" || splitFullName[k] != "II" || splitFullName[k] != "III" || splitFullName[k] != "IV" || splitFullName[k] != "V") {
+					if (!(splitFullName[k].equals("Jr.") || splitFullName[k].equals("I") || splitFullName[k].equals("II") || splitFullName[k].equals("III") || splitFullName[k].equals("IV") || splitFullName[k].equals("V"))) {
 						lastName += splitFullName[k];
 					}
 				}
@@ -85,6 +88,7 @@ public class Person {
 			firstName = splitFullName[0];
 			middleName = splitFullName[1];
 			lastName = splitFullName[2];
+			return;
 		}
 
 		// remainder (4+ full names)

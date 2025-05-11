@@ -42,6 +42,66 @@ public class Person {
 			lastName = splitFullName[2];
 		}
 
+		if (splitFullName[0].length() <= 2 && splitFullName.length > 2) { // special case where people have 1-2 charecter first names (ex. M, J., etc.)
+			firstName = splitFullName[0] + " " + splitFullName[1];
+			lastName = splitFullName [2];
+		}
+
+		// find with .
+
+		for (int i = 0; i < splitFullName.length; i++) {
+			// check if 2 chars or less or if there is a period
+			if (splitFullName[i].contains(".") || splitFullName[i].length() <= 2) {
+
+				if (i != 0) {
+					middleName = splitFullName[i];
+				} else {
+					firstName = splitFullName[i];
+				}
+				
+
+				for (int j = 0; j < i; j++) {
+					if (firstName != "") {
+						firstName += (" " + splitFullName[j]);
+					} else {
+						firstName += splitFullName[j];
+					}
+					
+				}
+
+				for (int k = i + 1; k < splitFullName.length; k++) { // then if found check the rest for Jr., III, II, etc. and get rid of that for the last name, put everything else afterwords 
+					if (splitFullName[k] != "Jr." || splitFullName[k] != "I" || splitFullName[k] != "II" || splitFullName[k] != "III" || splitFullName[k] != "IV" || splitFullName[k] != "V") {
+						lastName += splitFullName[k];
+					}
+				}
+
+				return;
+
+			}
+				
+		}
+
+		if (splitFullName.length == 3) { // names with full middle names usually
+			firstName = splitFullName[0];
+			middleName = splitFullName[1];
+			lastName = splitFullName[2];
+		}
+
+		// remainder (4+ full names)
+
+		firstName = splitFullName[0];
+		lastName = splitFullName[splitFullName.length - 1];
+
+
+		for (int x = 1; x < splitFullName.length - 1; x++) {
+			if (middleName == "") {
+				middleName += splitFullName[x];
+			} else {
+				middleName += (" " + splitFullName[x]);
+			}
+		}
+
+		// last name 2 word first words: De, Van, El, Le, Van,
 
 	}
 
@@ -51,12 +111,10 @@ public class Person {
 
 	public String getLastName() {
 		return lastName;
-		//return "";
 	}
 
 	public String getMiddleName() {
 		return middleName;
-		//return "";
 	}
 
 	public String getFullName() {

@@ -93,14 +93,14 @@ public class BKTree<T, Data> implements Tree<T> {
 	}
 
 	// adds a new node to the BK-tree
-	public void insert(T value) {
-		insert(new Node(value));
+	public boolean insert(T value) {
+		return insert(new Node(value));
 	}
-	public void insert(Node node) {
+	public boolean insert(Node node) {
 		if (isEmpty()) { // initial node
 			root = node;
 			size++;
-			return;
+			return true;
 		}
 
 		Node current = root;
@@ -108,10 +108,14 @@ public class BKTree<T, Data> implements Tree<T> {
 
 		while (current.children.containsKey(dist)) {
 			current = current.children.get(dist);
+			if (current.value.equals(node.value)) {
+				return false; // word already exists
+			}
 			dist = c.compute(current.value, node.value);
 		}
 		current.children.put(dist, node);
 		size++;
+		return true;
 	}
 
 	/*

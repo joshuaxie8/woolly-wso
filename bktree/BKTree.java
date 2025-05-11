@@ -166,6 +166,7 @@ public class BKTree<T, Data> implements Tree<T> {
 		}
 		node.children.clear();
 		insert(node);
+
 	}
 
 	// updates a node - in practice just removes the old node and inserts one with the new key
@@ -175,6 +176,7 @@ public class BKTree<T, Data> implements Tree<T> {
 		if (result != null) { // if value exists
 			delete(result.value);
 			result.value = newValue;
+			result.children.clear();
 			insert(result);
 			return true;
 		}

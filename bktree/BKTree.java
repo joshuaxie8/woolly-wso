@@ -96,6 +96,11 @@ public class BKTree<T, Data> implements Tree<T> {
 	public boolean insert(T value) {
 		return insert(new Node(value));
 	}
+	public boolean insert(T value, Data data) {
+		Node node = new Node(value);
+		node.data = data;
+		return insert(node);
+	}
 	public boolean insert(Node node) {
 		if (isEmpty()) { // initial node
 			root = node;
@@ -193,43 +198,63 @@ public class BKTree<T, Data> implements Tree<T> {
 		return new ArrayList<Node>();
 	}
 
-	public ArrayList<T> traverse() {
+	public ArrayList<T> traverseVals() {
 		ArrayList<T> result = new ArrayList<T>();
-		traverseHelper(root, result);
+		traverseValsHelper(root, result);
 		return result;
 	}
 
-	private void traverseHelper(Node node, ArrayList<T> result) {
+	private void traverseValsHelper(Node node, ArrayList<T> result) {
 		if (node == null) return;
 
 		result.add(node.value);
 
 		for (Node child : node.children.values()) {
-			traverseHelper(child, result);
+			traverseValsHelper(child, result);
+		}
+	}
+
+	public ArrayList<Data> traverseData() {
+		ArrayList<Data> result = new ArrayList<Data>();
+		traverseDataHelper(root, result);
+		return result;
+	}
+
+	private void traverseDataHelper(Node node, ArrayList<Data> result) {
+		if (node == null) return;
+
+		result.add(node.data);
+
+		for (Node child : node.children.values()) {
+			traverseDataHelper(child, result);
 		}
 	}
 
 	public static void main(String[] args) {
 		//test cases
 		BKTree<String,Integer> tests = new BKTree<String, Integer>(MetricFunctions.Lev);
-		tests.insert("book");
-		tests.insert("cake");
-		tests.insert("books");
-		tests.insert("boo");
-		tests.insert("cape");
-		tests.insert("cart");
-		tests.insert("boon");
-		tests.insert("cook");
+		tests.insert("book", 1);
+		tests.insert("cake", 2);
+		tests.insert("books", 3);
+		tests.insert("boo", 4);
+		tests.insert("cape", 5);
+		tests.insert("cart", 6);
+		tests.insert("boon", 7);
+		tests.insert("cook", 8);
 
 		System.out.println("GET: " + tests.get("cook").value);
 		System.out.println(tests.delete("book"));
 		System.out.println(tests.delete("book"));
 		tests.update("cook", "gurt");
 
-		ArrayList<String> names = tests.traverse();
-		System.out.println("Printing tree:"); // weird bug where 'books' appears twice
+		ArrayList<String> names = tests.traverseVals();
+		System.out.println("Printing tree:");
 		for (String name : names) {
 			System.out.println(name);
 		}
+
+		ArrayList<Integer> data = tests.traverseData();
+		System.out.println("Printing tree data:");
+		System.out.println(data);
 	}
 }

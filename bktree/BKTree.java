@@ -192,10 +192,38 @@ public class BKTree<T, Data> implements Tree<T> {
 		return false;
 	}
 
-	// searches for all stored values within a distance d from the given value (fuzzy search)
+	private void searchHelper(Node node, T val, int tol, ArrayList<T> words) {
+		if (node == null) {
+			return;
+		}
+
+		int dist = c.compute(node.value, val);
+
+		if (dist <= tol) {
+			words.add(node.value);
+		}
+
+		for (int i = (dist - tol); i <= (dist + tol); i++) {
+			Node currChild = node.children.get(i);
+
+			if (currChild != null) {
+				searchHelper(currChild, val, tol, words);
+			}
+		}
+	}
+
+
+	// searches for all stored values within a distance tol from the given value (fuzzy search)
 	// return type is TBD - currently Node for generalizability
-	public ArrayList<Node> search(T value, int d) {
-		return new ArrayList<Node>();
+	public ArrayList<T> search(T value, int tol) {
+
+		Node curr = root;
+
+		ArrayList<T> wordsList = new ArrayList<>();
+
+		searchHelper(curr, value, tol, wordsList);
+
+		return wordsList;
 	}
 
 	public ArrayList<T> traverseVals() {

@@ -50,10 +50,17 @@ public class Search {
 
 			ArrayList<String> exactMatches = tests.t.traverseData(tests.t.probe(a), a);
 			System.out.println("Exact prefix matches: ");
-			for (int i = 0; i < 3; i++) {
-				System.out.println(exactMatches.get(i));
+			if (exactMatches.size() > 4) {
+				for (int i = 0; i < 3; i++) {
+					System.out.println(exactMatches.get(i));
+				}
+				System.out.print(exactMatches.size() - 3); System.out.println(" more results");
 			}
-			System.out.print(exactMatches.size() - 3); System.out.println(" more results");
+			else {
+				for (String s : exactMatches) {
+					System.out.println(s);
+				}
+			}
 
 			ArrayList<String> fuzzyMatches = tests.bk.searchData(a, d);
 			System.out.println("Fuzzy matches: ");

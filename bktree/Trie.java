@@ -141,9 +141,10 @@ public class Trie<T, Data> implements Tree<T> {	// generic T is lowkey annoying
         return current; // returns the node whether or not it is a terminal
     }
 
-    public ArrayList<String> traverseVals() {
+    public ArrayList<String> traverseVals(Node start, String s) {
+        if (start == null) start = root;
         ArrayList<String> result = new ArrayList<String>();
-        traverseValsHelper(new StringBuilder(), root, result); // use StringBuilder to save memory
+        traverseValsHelper(new StringBuilder(s), start, result); // use StringBuilder to save memory
         return result;
     }
 
@@ -159,9 +160,10 @@ public class Trie<T, Data> implements Tree<T> {	// generic T is lowkey annoying
         }
     }
 
-    public ArrayList<Data> traverseData() {
+    public ArrayList<Data> traverseData(Node start, String s) {
+        if (start == null) start = root;
         ArrayList<Data> result = new ArrayList<Data>();
-        traverseDataHelper(new StringBuilder(), root, result);
+        traverseDataHelper(new StringBuilder(s), start, result);
         return result;
     }
 
@@ -202,13 +204,13 @@ public class Trie<T, Data> implements Tree<T> {	// generic T is lowkey annoying
         test.insert("a b c");
 
         System.out.println("values:");
-        ArrayList<String> print = test.traverseVals();
+        ArrayList<String> print = test.traverseVals(null, "");
         for (int i = 0; i < print.size(); i++) {
             System.out.println(print.get(i));
         }
 
         System.out.println("data:");
-        print = test.traverseData();
+        print = test.traverseData(null, "");
         for (int i = 0; i < print.size(); i++) {
             System.out.println(print.get(i));
         }

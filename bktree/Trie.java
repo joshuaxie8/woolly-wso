@@ -141,30 +141,38 @@ public class Trie<T, Data> implements Tree<T> {	// generic T is lowkey annoying
         return current; // returns the node whether or not it is a terminal
     }
 
-    public ArrayList<String> traverse(boolean getData){ // getData: if true, adds data to array list instead of string
+    public ArrayList<String> traverseVals() {
         ArrayList<String> result = new ArrayList<String>();
-        traverseHelper(new StringBuilder(), root, result, getData); // use StringBuilder to save memory
+        traverseValsHelper(new StringBuilder(), root, result); // use StringBuilder to save memory
         return result;
     }
 
-    private void traverseHelper(StringBuilder sb, Node current, ArrayList<String> list, boolean getData) {
+    private void traverseValsHelper(StringBuilder sb, Node current, ArrayList<String> result) {
         if (current.isTerminal) {
-        	if (getData) {
-                if (current.data != null) {
-                    list.add(current.data.toString());
-                }
-        		else {
-                    list.add("missing data!");
-                }
-        	}
-        	else {
-        		list.add(sb.toString());
-        	}
+        	result.add(sb.toString());
         }
         for (Character c : current.children.keySet()) {
         	sb.append(c);						// add character
-        	traverseHelper(sb, current.children.get(c), list, getData);
+        	traverseValsHelper(sb, current.children.get(c), result);
         	sb.deleteCharAt(sb.length() - 1); 	// backtrack
+
+        }
+    }
+
+    public ArrayList<Data> traverseData() {
+        ArrayList<Data> result = new ArrayList<Data>();
+        traverseDataHelper(new StringBuilder(), root, result);
+        return result;
+    }
+
+    private void traverseDataHelper(StringBuilder sb, Node current, ArrayList<Data> result) {
+        if (current.isTerminal) {
+            result.add(current.data); // might add null data
+        }
+        for (Character c : current.children.keySet()) {
+            sb.append(c);                       // add character
+            traverseDataHelper(sb, current.children.get(c), result);
+            sb.deleteCharAt(sb.length() - 1);   // backtrack
 
         }
     }
@@ -193,8 +201,14 @@ public class Trie<T, Data> implements Tree<T> {	// generic T is lowkey annoying
         test.insert("a beetle");
         test.insert("a b c");
 
-        System.out.println("traversing");
-        ArrayList<String> print = test.traverse(true);
+        System.out.println("values:");
+        ArrayList<String> print = test.traverseVals();
+        for (int i = 0; i < print.size(); i++) {
+            System.out.println(print.get(i));
+        }
+
+        System.out.println("data:");
+        print = test.traverseData();
         for (int i = 0; i < print.size(); i++) {
             System.out.println(print.get(i));
         }

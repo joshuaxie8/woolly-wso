@@ -38,8 +38,8 @@ public class Search {
 
 		for (Person person : tests.p.peopleList) { // iterates through each person
 			//System.out.println(person.getFirstName());
-			tests.t.insert(person.getFirstName().toLowerCase()); // trie insertion
-			tests.bk.insert(person.getFirstName().toLowerCase()); // bk-tree insertion
+			tests.t.insert(person.getFirstName().toLowerCase(), person.getFullName()); // trie insertion
+			tests.bk.insert(person.getFirstName().toLowerCase(), person.getFullName()); // bk-tree insertion
 		}
 
 		while (true) {
@@ -48,13 +48,13 @@ public class Search {
 			System.out.print("Show results within __ characters: ");
 			int d = getUserInt();
 
-			ArrayList<String> exactMatches = tests.t.traverseVals(tests.t.probe(a), a);
+			ArrayList<String> exactMatches = tests.t.traverseData(tests.t.probe(a), a);
 			System.out.println("Exact matches: ");
 			for (String s : exactMatches) {
 				System.out.println(s);
 			}
 
-			ArrayList<String> fuzzyMatches = tests.bk.search(a, d);
+			ArrayList<String> fuzzyMatches = tests.bk.searchData(a, d);
 			System.out.println("Fuzzy matches: ");
 			for (String s : fuzzyMatches) {
 				System.out.println(s);

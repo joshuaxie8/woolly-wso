@@ -142,8 +142,8 @@ public class Trie<T, Data> implements Tree<T> {	// generic T is lowkey annoying
     }
 
     public ArrayList<String> traverseVals(Node start, String s) {
-        if (start == null) start = root;
         ArrayList<String> result = new ArrayList<String>();
+        if (start == null) return result;
         traverseValsHelper(new StringBuilder(s), start, result); // use StringBuilder to save memory
         return result;
     }
@@ -161,8 +161,8 @@ public class Trie<T, Data> implements Tree<T> {	// generic T is lowkey annoying
     }
 
     public ArrayList<Data> traverseData(Node start, String s) {
-        if (start == null) start = root;
         ArrayList<Data> result = new ArrayList<Data>();
+        if (start == null) return result;
         traverseDataHelper(new StringBuilder(s), start, result);
         return result;
     }

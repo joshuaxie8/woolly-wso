@@ -232,7 +232,7 @@ public class BKTree<T, Data> implements Tree<T> {
 		int dist = c.compute(node.value, val);
 
 		if (dist <= tol) {
-			words.add(node.data);
+			if (dist != 0) words.add(node.data);
 		}
 
 		for (int i = (dist - tol); i <= (dist + tol); i++) {

@@ -113,9 +113,9 @@ public class BKTree<T, Data> implements Tree<T> {
 
 		while (current.children.containsKey(dist)) {
 			current = current.children.get(dist);
-			if (current.value.equals(node.value)) {
-				return false; // word already exists
-			}
+			// if (current.value.equals(node.value)) {
+			// 	return false; // word already exists
+			// }
 			dist = c.compute(current.value, node.value);
 		}
 		current.children.put(dist, node);
@@ -211,8 +211,6 @@ public class BKTree<T, Data> implements Tree<T> {
 			}
 		}
 	}
-
-
 	// searches for all stored values within a distance tol from the given value (fuzzy search)
 	// return type is TBD - currently Node for generalizability
 	public ArrayList<T> search(T value, int tol) {
@@ -222,6 +220,36 @@ public class BKTree<T, Data> implements Tree<T> {
 		ArrayList<T> wordsList = new ArrayList<>();
 
 		searchHelper(curr, value, tol, wordsList);
+
+		return wordsList;
+	}
+
+	private void searchDataHelper(Node node, T val, int tol, ArrayList<Data> words) {
+		if (node == null) {
+			return;
+		}
+
+		int dist = c.compute(node.value, val);
+
+		if (dist <= tol) {
+			words.add(node.data);
+		}
+
+		for (int i = (dist - tol); i <= (dist + tol); i++) {
+			Node currChild = node.children.get(i);
+
+			if (currChild != null) {
+				searchDataHelper(currChild, val, tol, words);
+			}
+		}
+	}
+	public ArrayList<Data> searchData(T value, int tol) {
+
+		Node curr = root;
+
+		ArrayList<Data> wordsList = new ArrayList<>();
+
+		searchDataHelper(curr, value, tol, wordsList);
 
 		return wordsList;
 	}

@@ -8,7 +8,7 @@ public class Trie<T, Data> implements Tree<T> {	// generic T is lowkey annoying
 	private class Node {
 		Map<Character, Node> children;
         public boolean isTerminal;
-        Data data;
+        ArrayList<Data> data = new ArrayList<>();
 
         public Node() {
             this.children = new HashMap<>();	// hashmap for more flexible children matching
@@ -32,7 +32,7 @@ public class Trie<T, Data> implements Tree<T> {	// generic T is lowkey annoying
     	return size;
     }
 
-    public boolean insert(T value) {
+    public boolean insert(T value) { // unused
     	String word = "";
     	if (value instanceof String) { // casts generic type to a string
 		    word = (String) value;
@@ -74,15 +74,13 @@ public class Trie<T, Data> implements Tree<T> {	// generic T is lowkey annoying
 
         if (!current.isTerminal) {
             current.isTerminal = true;
-            current.data = data;
-            size++;
-            
-            return true;
         }
-        return false;
+        current.data.add(data);
+        size++;
+        return true;
     }
 
-    public boolean delete(T value) {
+    public boolean delete(T value) { // the deletion method is fundamentally broken (REDEFINE ADT)
     	String word = "";
     	if (value instanceof String) {
 		    word = (String) value;
@@ -169,7 +167,7 @@ public class Trie<T, Data> implements Tree<T> {	// generic T is lowkey annoying
 
     private void traverseDataHelper(StringBuilder sb, Node current, ArrayList<Data> result) {
         if (current.isTerminal) {
-            result.add(current.data); // might add null data
+            result.addAll(current.data); // might add null data
         }
         for (Character c : current.children.keySet()) {
             sb.append(c);                       // add character

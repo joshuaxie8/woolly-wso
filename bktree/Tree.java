@@ -2,7 +2,7 @@ package bktree;
 
 import java.util.Comparator;
 
-public interface Tree<T> {
+public interface Tree<K, V> {
 
 	// trivial method - true if tree is empty and false if not
 	public abstract boolean isEmpty();
@@ -10,14 +10,14 @@ public interface Tree<T> {
 	// trivial method - returns number of elements in tree
 	public abstract int size();
 
-	// returns true or false depending on whether the tree contains a given value
-	public abstract boolean contains(T value);
+	// returns true or false depending on whether the tree contains a given key
+	public abstract boolean contains(K key);
 
-	// inserts a new value into the tree
-	// returns false if value already exists
-	public abstract boolean insert(T value);
+	// inserts a new node into the tree
+	// returns false if key-value pair already exists
+	public abstract boolean insert(K key, V value);
 
-	// removes a value from a tree
+	// removes a node from a tree
 	// true if deletion is successful
-	public abstract boolean delete(T value);
+	// public abstract boolean delete(K key, V value);
 }

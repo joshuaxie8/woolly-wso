@@ -57,7 +57,7 @@ public class MetricFunctions {
 			Arrays.setAll(d1, i -> i); // d1 = {0, 1, 2, ... , n};
 
 			for (int i = 0; i < m; i++) {
-				d2[0] = i + 1;
+				d2[0] = i;
 
 				for (int j = 0; j < n; j++) {
 					int del = d1[j + 1] + 1;
@@ -81,11 +81,7 @@ public class MetricFunctions {
 
 	// testing
 	public static void main(String[] args) {
-		System.out.println(MetricFunctions.osa.compute("aaron", "araon"));
-		System.out.println(MetricFunctions.osa.compute("aaaron", "aaron"));
-		System.out.println(MetricFunctions.osa.compute("aaron", "aaaron"));
-		System.out.println(MetricFunctions.osa.compute("aaron", "baron"));
-
+		System.out.println(MetricFunctions.Lev.compute("aaron", "araon"));
 
 	}
 }

@@ -4,9 +4,9 @@ import java.util.*;
 
 // this is our main file
 public class Search {
-	People p = new People();	// automatically ingests people
 	BKTree<String, String> bk; 	// bk tree!
 	Trie<String, String> t;		// trie!
+	People p = new People();	// automatically ingests people
 
 	public Search(DistanceMetric<String> c) {
 		bk = new BKTree<String, String>(c);
@@ -17,22 +17,7 @@ public class Search {
 		return null;
 	}
 
-	/*
-	STRING SIMPLIFICATION - FOR BOTH USER INPUT AND STORED VALUES
-
-	given a String s, returns an array list of all normalized, "reasonable" parsings of s
-
-	ex.
-	simplify("Waage-Pickle") -> {"waagepickle", "waage pickle"}
-	simplify("José") -> {"jose"}
-	simplify("O'Connor") -> {"oconnor", "o connor"}
-	simplify("J. B.") -> {"jb", "j b"}
-	simplify("John A. Doe") -> {"john a doe"} - only concatenate for single letter pairs?
-
-	(tentative)
-	For stored names, insert all results into BK-tree/Trie, but all with the same value field for later retrieval
-	*/
-	public static ArrayList<String> simplify(String s) {
+	public ArrayList<String> simplify(String s) {
 		StringBuilder sb = new StringBuilder(s); // mutable StringBuilder to save memory
 		return null;
 	}
@@ -49,45 +34,45 @@ public class Search {
     }
 
 	public static void main(String[] args) {
-		Search tests = new Search(MetricFunctions.osa);
+		Search tests = new Search(MetricFunctions.Lev);
 
-		// for (Person person : tests.p.peopleList) { // iterates through each person
-		// 	//System.out.println(person.getFirstName());
-		// 	tests.t.insert(person.getFirstName().toLowerCase(), person.getFullName()); // trie insertion
-		// 	tests.bk.insert(person.getFirstName().toLowerCase(), person.getFullName()); // bk-tree insertion
-		// }
+		for (Person person : tests.p.peopleList) { // iterates through each person
+			//System.out.println(person.getFirstName());
+			tests.t.insert(person.getFirstName().toLowerCase(), person.getFullName()); // trie insertion
+			tests.bk.insert(person.getFirstName().toLowerCase(), person.getFullName()); // bk-tree insertion
+		}
 
-		// while (true) {
-		// 	System.out.print("Enter a name: ");
-		// 	String a = getUserInput(); a = a.toLowerCase();
-		// 	System.out.print("Show results within __ characters: ");
-		// 	int d = getUserInt();
+		while (true) {
+			System.out.print("Enter a name: ");
+			String a = getUserInput(); a = a.toLowerCase();
+			System.out.print("Show results within __ characters: ");
+			int d = getUserInt();
 
-		// 	ArrayList<String> exactMatches = tests.t.traverseVals(tests.t.probe(a), a);
-		// 	System.out.println("Exact prefix matches: ");
-		// 	if (exactMatches.size() > 4) {
-		// 		for (int i = 0; i < 3; i++) {
-		// 			System.out.println(exactMatches.get(i));
-		// 		}
-		// 		System.out.print(exactMatches.size() - 3); System.out.println(" more results");
-		// 	}
-		// 	else {
-		// 		for (String s : exactMatches) {
-		// 			System.out.println(s);
-		// 		}
-		// 	}
+			ArrayList<String> exactMatches = tests.t.traverseVals(tests.t.probe(a), a);
+			System.out.println("Exact prefix matches: ");
+			if (exactMatches.size() > 4) {
+				for (int i = 0; i < 3; i++) {
+					System.out.println(exactMatches.get(i));
+				}
+				System.out.print(exactMatches.size() - 3); System.out.println(" more results");
+			}
+			else {
+				for (String s : exactMatches) {
+					System.out.println(s);
+				}
+			}
 
-		// 	ArrayList<String> fuzzyMatches = tests.bk.fuzzyVals(a, d, false);
+			ArrayList<String> fuzzyMatches = tests.bk.fuzzyVals(a, d, false);
 
 
-		// 	// ArrayList<String> fuzzyMatches = tests.bk.searchData(a, d);
-		// 	System.out.println("Fuzzy matches: ");
-		// 	for (String s : fuzzyMatches) {
-		// 		System.out.println(s);
-		// 	}
+			// ArrayList<String> fuzzyMatches = tests.bk.searchData(a, d);
+			System.out.println("Fuzzy matches: ");
+			for (String s : fuzzyMatches) {
+				System.out.println(s);
+			}
 
-		// 	// TO DO: 
-		// }
+			// TO DO: 
+		}
 
 		// ArrayList<String> print = tests.t.traverseData();
         // for (int i = 0; i < print.size(); i++) {

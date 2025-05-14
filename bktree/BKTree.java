@@ -2,25 +2,25 @@ package bktree;
 
 import java.util.*;
 
-public class BKTree<T, Data> implements Tree<T> {
+// implementation of BK tree with key value pairs
+public class BKTree<K, V> implements Tree<K, V> {
 	private class Node {
-		T value; // key
-		Data data; // value
+		K key; // key
+		V val; // value
 		Map<Integer, Node> children = new HashMap<>();
 
 		// TO-DO: implement storage of individual data in hash map outside of bk-tree
 		// (good for actual implementation to WSO database)
-		// thus data field may not be necessary
-		public Node(T value) {
-			this.value = value;
+		public Node(K key) {
+			this.key = key;
 		}
 	}
 
 	private Node root;
 	private int size = 0;
-	private DistanceMetric<T> c; // a BK-tree "comparator" must return a range of integer values, not just -1, 0, and 1
+	private DistanceMetric<K> c; // a BK-tree "comparator" must return a range of integer values, not just -1, 0, and 1
 
-	public BKTree(DistanceMetric<T> comparator) {
+	public BKTree(DistanceMetric<K> comparator) {
 		c = comparator;
 	}
 
@@ -33,8 +33,19 @@ public class BKTree<T, Data> implements Tree<T> {
 		return size;
 	}
 
-	public boolean containsHelper(Node node, T val) {
-		int dist = c.compute(node.value, val);
+	// whether or not the BK-tree contains an exact match to our key
+	// if an exact match exists, find all prefix matches using a trie or similar data structure
+	public boolean contains(K key) {
+		if (isEmpty()) {
+			return false;
+		}
+
+		Node curr = root;
+
+		return containsHelper(curr, key);
+	}
+	public boolean containsHelper(Node node, K key) {
+		int dist = c.compute(node.key, key);
 
 		if (dist == 0) {
 			return true;
@@ -43,27 +54,25 @@ public class BKTree<T, Data> implements Tree<T> {
 		Node child = node.children.get(dist);
 
 		if (child != null) {
-			return containsHelper(child, val);
+			return containsHelper(child, key);
 		}
 
 		return false;
-
 	}
 
-	// whether or not the BK-tree contains an exact match to our value
-	// if an exact match exists, find all prefix matches using a trie or similar data structure
-	public boolean contains(T value) {
+	// gets the shallowest node corresponding to the given value; returns null if no match is found
+	// return type is TBD - currently Node for generalizability
+	public Node get(K key) {
 		if (isEmpty()) {
-			return false;
+			return null;
 		}
 
 		Node curr = root;
 
-		return containsHelper(curr, value);
+		return getHelper(curr, key);
 	}
-
-	private Node getHelper(Node node, T val) {
-		int dist = c.compute(node.value, val);
+	private Node getHelper(Node node, K key) {
+		int dist = c.compute(node.key, key);
 
 		if (dist == 0) {
 			return node;
@@ -72,33 +81,15 @@ public class BKTree<T, Data> implements Tree<T> {
 		Node child = node.children.get(dist);
 
 		if (child != null) {
-			return getHelper(child, val);
+			return getHelper(child, key);
 		}
 
 		return null;
-
 	}
 
-	// gets the node corresponding to the given value; returns null if no match is found
-	// return type is TBD - currently Node for generalizability
-	public Node get(T value) {
-		if (isEmpty()) {
-			return null;
-
-		}
-
-		Node curr = root;
-
-		return getHelper(curr, value);
-	}
-
-	// adds a new node to the BK-tree
-	public boolean insert(T value) {
-		return insert(new Node(value));
-	}
-	public boolean insert(T value, Data data) {
-		Node node = new Node(value);
-		node.data = data;
+	public boolean insert(K key, V val) {
+		Node node = new Node(key);
+		node.val = val;
 		return insert(node);
 	}
 	public boolean insert(Node node) {
@@ -109,19 +100,105 @@ public class BKTree<T, Data> implements Tree<T> {
 		}
 
 		Node current = root;
-		int dist = c.compute(current.value, node.value);
+		int dist = c.compute(current.key, node.key);
 
 		while (current.children.containsKey(dist)) {
 			current = current.children.get(dist);
-			// if (current.value.equals(node.value)) {
-			// 	return false; // word already exists
-			// }
-			dist = c.compute(current.value, node.value);
+			if (current.val.equals(node.val)) return false; // key value pair already exists
+			dist = c.compute(current.key, node.key);
 		}
 		current.children.put(dist, node);
 		size++;
 		return true;
 	}
+
+	/*
+	APPROXIMATE STRING MATCHING
+
+	Fuzzily searches for all stored nodes with values within a tolerance distance tol from the given key
+	If exactMatches is FALSE, does not add nodes where key is an exact match (distance = 0)
+	*/
+	private ArrayList<Node> fuzzy(K key, int tol, boolean exactMatches) {
+
+		ArrayList<Node> results = new ArrayList<>();
+
+		fuzzyHelper(root, key, tol, results, exactMatches);
+
+		return results;
+	}
+	private void fuzzyHelper(Node node, K key, int tol, ArrayList<Node> results, boolean exactMatches) {
+		if (node == null) {
+			return;
+		}
+
+		int dist = c.compute(node.key, key);
+
+		if (dist <= tol && (dist != 0 || exactMatches)) {
+			results.add(node); // adds the node if key distance is within range
+		}
+
+		for (int i = (dist - tol); i <= (dist + tol); i++) {
+			Node currChild = node.children.get(i);
+
+			if (currChild != null) {
+				fuzzyHelper(currChild, key, tol, results, exactMatches);
+			}
+		}
+	}
+
+	// note: both fuzzy methods search by KEY only
+
+	// performs a fuzzy search on the BK tree, returning an array list of keys
+	// fuzzyKeys() is used primarily for testing
+	public ArrayList<K> fuzzyKeys(K key, int tol, boolean exactMatches) {
+		ArrayList<Node> results = fuzzy(key, tol, exactMatches); // get results
+		ArrayList<K> keys = new ArrayList<>();
+		for (Node node : results) keys.add(node.key);
+		return keys;
+	}
+
+	// performs a fuzzy search on the BK tree, returning an array list of values
+	public ArrayList<V> fuzzyVals(K key, int tol, boolean exactMatches) {
+		ArrayList<Node> results = fuzzy(key, tol, exactMatches); // get results
+		ArrayList<V> vals = new ArrayList<>();
+		for (Node node : results) vals.add(node.val);
+		return vals;
+	}
+
+	/*
+	IN-ORDER TREE TRAVERSAL
+
+	Note: though travers() uses in-order traversal, the resulting array list is not in a sorted order!
+	*/
+	private ArrayList<Node> traverse() {
+		ArrayList<Node> results = new ArrayList<>(size);
+		traverseHelper(root, results);
+		return results;
+	}
+
+	private void traverseHelper(Node node, ArrayList<Node> results) {
+		if (node == null) return;
+		results.add(node);
+		for (Node child : node.children.values()) traverseHelper(child, results);
+	}
+
+	// these traverse methods simply recast traverse() into the desired type
+	// somewhat slow, but primarily for testing
+	public ArrayList<K> getAllKeys() {
+		ArrayList<Node> results = traverse();
+		ArrayList<K> keys = new ArrayList<>(size);
+		for (Node node : results) keys.add(node.key);
+		return keys;
+	}
+
+	public ArrayList<V> getAllVals() {
+		ArrayList<Node> results = traverse();
+		ArrayList<V> vals = new ArrayList<>(size);
+		for (Node node : results) vals.add(node.val);
+		return vals;
+	}
+
+	// NODE DELETION NOT USED
 
 	/*
 	Removes a node from the BK-tree - returns true if deletion is successful and false if not
@@ -130,187 +207,77 @@ public class BKTree<T, Data> implements Tree<T> {
 
 	Deletes the node, then recursively reinserts child subtrees
 	*/
-	public boolean delete(T value) {
-		if (root == null) return false; // if tree is empty
+	// public boolean delete(K key, V val) {
+	// 	if (root == null) return false; // if tree is empty
 
-		if (root.value.equals(value)) { // special logic for deleting root
-			Node old = root;
-			root = null;
-			size = 0;
-			for (Node child : old.children.values()) {
-				reinsertSubtree(child); // puts children back into tree
-			}
-			return true;
-		}
-		return deleteHelper(null, root, value); // normal case - node is NOT the root
-	}
+	// 	if (root.key.equals(key)) { // special logic for deleting root
+	// 		Node old = root;
+	// 		root = null;
+	// 		size = 0;
+	// 		for (Node child : old.children.values()) {
+	// 			reinsertSubtree(child); // puts children back into tree
+	// 		}
+	// 		return true;
+	// 	}
+	// 	return deleteHelper(null, root, key); // normal case - node is NOT the root
+	// }
 
-	// recursive delete method
-	private boolean deleteHelper(Node parent, Node current, T value) {
-		// INCOMPLETE
-		int dist = c.compute(current.value, value);
+	// // recursive delete method
+	// private boolean deleteHelper(Node parent, Node current, K key) {
+	// 	int dist = c.compute(current.key, key);
 
-		Node target	= current.children.get(dist); // target is a child of current
-		if (target == null) return false; 	// node is missing
+	// 	Node target	= current.children.get(dist); // target is a child of current
+	// 	if (target == null) return false; 	// node is missing
 
-		if (target.value.equals(value)) { 	// if node is found
-			current.children.remove(dist);	// remove hash map reference
-			int oldSize = size;
+	// 	if (target.key.equals(key)) { 	// if node is found
+	// 		current.children.remove(dist);	// remove hash map reference
+	// 		int oldSize = size;
 
-			for (Node child : target.children.values()) { // reinserts children
-				reinsertSubtree(child);
-			}
-			size = oldSize - 1;
-			return true;
-		}
-		else { // keep recursing
-			return deleteHelper(current, target, value);
-		}
-	}
+	// 		for (Node child : target.children.values()) { // reinserts children
+	// 			reinsertSubtree(child);
+	// 		}
+	// 		size = oldSize - 1;
+	// 		return true;
+	// 	}
+	// 	else { // keep recursing
+	// 		return deleteHelper(current, target, key);
+	// 	}
+	// }
 
-	// so slow, wow
-	private void reinsertSubtree(Node node) {
-		for (Node child : node.children.values()) {
-			reinsertSubtree(child);
-		}
-		node.children.clear();
-		insert(node);
-
-	}
-
-	// updates a node - in practice just removes the old node and inserts one with the new key
-	// returns true if edit is successful
-	public boolean update(T oldValue, T newValue) {
-		Node result = get(oldValue);
-		if (result != null) { // if value exists
-			delete(result.value);
-			result.value = newValue;
-			result.children.clear();
-			insert(result);
-			return true;
-		}
-		return false;
-	}
-
-	private void searchHelper(Node node, T val, int tol, ArrayList<T> words) {
-		if (node == null) {
-			return;
-		}
-
-		int dist = c.compute(node.value, val);
-
-		if (dist <= tol) {
-			words.add(node.value);
-		}
-
-		for (int i = (dist - tol); i <= (dist + tol); i++) {
-			Node currChild = node.children.get(i);
-
-			if (currChild != null) {
-				searchHelper(currChild, val, tol, words);
-			}
-		}
-	}
-	// searches for all stored values within a distance tol from the given value (fuzzy search)
-	// return type is TBD - currently Node for generalizability
-	public ArrayList<T> search(T value, int tol) {
-
-		Node curr = root;
-
-		ArrayList<T> wordsList = new ArrayList<>();
-
-		searchHelper(curr, value, tol, wordsList);
-
-		return wordsList;
-	}
-
-	private void searchDataHelper(Node node, T val, int tol, ArrayList<Data> words) {
-		if (node == null) {
-			return;
-		}
-
-		int dist = c.compute(node.value, val);
-
-		if (dist <= tol) {
-			if (dist != 0) words.add(node.data);
-		}
-
-		for (int i = (dist - tol); i <= (dist + tol); i++) {
-			Node currChild = node.children.get(i);
-
-			if (currChild != null) {
-				searchDataHelper(currChild, val, tol, words);
-			}
-		}
-	}
-	public ArrayList<Data> searchData(T value, int tol) {
-
-		Node curr = root;
-
-		ArrayList<Data> wordsList = new ArrayList<>();
-
-		searchDataHelper(curr, value, tol, wordsList);
-
-		return wordsList;
-	}
-
-	public ArrayList<T> traverseVals() {
-		ArrayList<T> result = new ArrayList<T>();
-		traverseValsHelper(root, result);
-		return result;
-	}
-
-	private void traverseValsHelper(Node node, ArrayList<T> result) {
-		if (node == null) return;
-
-		result.add(node.value);
-
-		for (Node child : node.children.values()) {
-			traverseValsHelper(child, result);
-		}
-	}
-
-	public ArrayList<Data> traverseData() {
-		ArrayList<Data> result = new ArrayList<Data>();
-		traverseDataHelper(root, result);
-		return result;
-	}
-
-	private void traverseDataHelper(Node node, ArrayList<Data> result) {
-		if (node == null) return;
-
-		result.add(node.data);
-
-		for (Node child : node.children.values()) {
-			traverseDataHelper(child, result);
-		}
-	}
+	// // so slow, wow
+	// private void reinsertSubtree(Node node) {
+	// 	for (Node child : node.children.values()) {
+	// 		reinsertSubtree(child);
+	// 	}
+	// 	node.children.clear();
+	// 	insert(node);
+	// }
 
 	public static void main(String[] args) {
 		//test cases
-		BKTree<String,Integer> tests = new BKTree<String, Integer>(MetricFunctions.Lev);
-		tests.insert("book", 1);
-		tests.insert("cake", 2);
-		tests.insert("books", 3);
-		tests.insert("boo", 4);
-		tests.insert("cape", 5);
-		tests.insert("cart", 6);
-		tests.insert("boon", 7);
-		tests.insert("cook", 8);
+		// BKTree<String,Integer> tests = new BKTree<String, Integer>(MetricFunctions.Lev);
+		// tests.insert("book", 1);
+		// tests.insert("cake", 2);
+		// tests.insert("books", 3);
+		// tests.insert("boo", 4);
+		// tests.insert("cape", 5);
+		// tests.insert("cart", 6);
+		// tests.insert("boon", 7);
+		// tests.insert("cook", 8);
 
-		System.out.println("GET: " + tests.get("cook").value);
-		System.out.println(tests.delete("book"));
-		System.out.println(tests.delete("book"));
-		tests.update("cook", "gurt");
+		// System.out.println("GET: " + tests.get("cook").value);
+		// System.out.println(tests.delete("book"));
+		// System.out.println(tests.delete("book"));
+		// tests.update("cook", "gurt");
 
-		ArrayList<String> names = tests.traverseVals();
-		System.out.println("Printing tree:");
-		for (String name : names) {
-			System.out.println(name);
-		}
+		// ArrayList<String> names = tests.traverseVals();
+		// System.out.println("Printing tree:");
+		// for (String name : names) {
+		// 	System.out.println(name);
+		// }
 
-		ArrayList<Integer> data = tests.traverseData();
-		System.out.println("Printing tree data:");
-		System.out.println(data);
+		// ArrayList<Integer> data = tests.traverseData();
+		// System.out.println("Printing tree data:");
+		// System.out.println(data);
 	}
 }

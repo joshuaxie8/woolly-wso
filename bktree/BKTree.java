@@ -255,7 +255,7 @@ public class BKTree<K, V> implements Tree<K, V> {
 
 	public static void main(String[] args) {
 		//test cases
-		// BKTree<String,Integer> tests = new BKTree<String, Integer>(MetricFunctions.Lev);
+		// BKTree<String,Integer> tests = new BKTree<String, Integer>(MetricFunctions.lev);
 		// tests.insert("book", 1);
 		// tests.insert("cake", 2);
 		// tests.insert("books", 3);

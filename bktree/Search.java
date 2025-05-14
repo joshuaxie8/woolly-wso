@@ -48,7 +48,7 @@ public class Search {
 			System.out.print("Show results within __ characters: ");
 			int d = getUserInt();
 
-			ArrayList<String> exactMatches = tests.t.traverseData(tests.t.probe(a), a);
+			ArrayList<String> exactMatches = tests.t.traverseVals(tests.t.probe(a), a);
 			System.out.println("Exact prefix matches: ");
 			if (exactMatches.size() > 4) {
 				for (int i = 0; i < 3; i++) {
@@ -62,7 +62,10 @@ public class Search {
 				}
 			}
 
-			ArrayList<String> fuzzyMatches = tests.bk.searchData(a, d);
+			ArrayList<String> fuzzyMatches = tests.bk.fuzzyVals(a, d, false);
+
+
+			// ArrayList<String> fuzzyMatches = tests.bk.searchData(a, d);
 			System.out.println("Fuzzy matches: ");
 			for (String s : fuzzyMatches) {
 				System.out.println(s);

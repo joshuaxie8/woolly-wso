@@ -80,36 +80,38 @@ public class Search {
 	public static void main(String[] args) {
 		Search tests = new Search(MetricFunctions.osa);
 
-		System.out.println(Search.simplify("José"));
-		System.out.println(Search.simplify("J. B."));
+		// System.out.println(Search.simplify("José"));
+		// System.out.println(Search.simplify("J. B."));
 
-		while (true) {
-			System.out.print("Enter a name: ");
-			String a = getUserInput(); a = a.toLowerCase();
-			System.out.print("Show results within __ characters: ");
-			int d = getUserInt();
+		
 
-			ArrayList<Integer> exactMatches = tests.t.traverseVals(tests.t.probe(a), a);
-			System.out.println("Exact prefix matches: ");
-			if (exactMatches.size() > 4) {
-				for (int i = 0; i < 3; i++) {
-					System.out.println(tests.idToPerson.get(i).getFullName());
-				}
-				System.out.print(exactMatches.size() - 3); System.out.println(" more results");
-			}
-			else {
-				for (int i : exactMatches) {
-					System.out.println(tests.idToPerson.get(i).getFullName());
-				}
-			}
+		// while (true) {
+		// 	System.out.print("Enter a name: ");
+		// 	String a = getUserInput(); a = a.toLowerCase();
+		// 	System.out.print("Show results within __ characters: ");
+		// 	int d = getUserInt();
 
-			ArrayList<Integer> fuzzyMatches = tests.bk.fuzzyVals(a, d, false);
+		// 	ArrayList<Integer> exactMatches = tests.t.traverseVals(tests.t.probe(a), a);
+		// 	System.out.println("Exact prefix matches: ");
+		// 	if (exactMatches.size() > 4) {
+		// 		for (int i = 0; i < 3; i++) {
+		// 			System.out.println(tests.idToPerson.get(i).getFullName());
+		// 		}
+		// 		System.out.print(exactMatches.size() - 3); System.out.println(" more results");
+		// 	}
+		// 	else {
+		// 		for (int i : exactMatches) {
+		// 			System.out.println(tests.idToPerson.get(i).getFullName());
+		// 		}
+		// 	}
 
-			// ArrayList<String> fuzzyMatches = tests.bk.searchData(a, d);
-			System.out.println("Fuzzy matches: ");
-			for (int i : fuzzyMatches) {
-				System.out.println(tests.idToPerson.get(i).getFullName());
-			}
-		}
+		// 	ArrayList<Integer> fuzzyMatches = tests.bk.fuzzyVals(a, d, false);
+
+		// 	// ArrayList<String> fuzzyMatches = tests.bk.searchData(a, d);
+		// 	System.out.println("Fuzzy matches: ");
+		// 	for (int i : fuzzyMatches) {
+		// 		System.out.println(tests.idToPerson.get(i).getFullName());
+		// 	}
+		// }
 	}
 }

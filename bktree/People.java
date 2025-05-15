@@ -14,15 +14,54 @@ public class People {
 
 		public void injestData() {
 			try {
-				String filePath = "bktree/names.csv";
+				String filePath = "bktree/data.csv";
 				File file = new File(filePath);
 				Scanner scanner = new Scanner(file);
 
 				while (scanner.hasNextLine()) {
 
-					String fullName = scanner.nextLine();
+					String fullLine = scanner.nextLine();
+					System.out.println(fullLine);
 
-					Person newPerson = new Person(fullName);
+					String[] fullLineSplit = fullLine.split("\\*");
+
+					for (int i = 0; i < fullLineSplit.length; i++) {
+						System.out.println(fullLineSplit[i]);
+					}
+
+					String name = fullLineSplit[0];
+
+					String unix = fullLineSplit[1];
+
+					String type = fullLineSplit[2];
+
+					int classYear = -1;
+
+					if (!fullLineSplit[3].equals("null")) {
+						classYear = Integer.parseInt(fullLineSplit[3]);
+					}
+
+					String homeTown = "";
+
+					if (!fullLineSplit[4].equals("null")) {
+						homeTown = fullLineSplit[4];
+					}
+
+					String homeState = "";
+
+					if (!fullLineSplit[5].equals("null")) {
+						homeState = fullLineSplit[5];
+					}
+
+					String homeCountry = "";
+
+					if (!fullLineSplit[6].equals("null")) {
+						homeCountry = fullLineSplit[6];
+					}
+
+
+
+					Person newPerson = new Person(name, unix, type, classYear, homeTown, homeState, homeCountry);
 
 					peopleList.add(newPerson);
 
@@ -38,7 +77,7 @@ public class People {
 			People allPeople = new People();
 
 			for (int i = 0; i < allPeople.peopleList.size(); i++) {
-				System.out.println("First Name: " + allPeople.peopleList.get(i).getFirstName() + " | Middle Name: " + allPeople.peopleList.get(i).getMiddleName() + " | Last Name: " + allPeople.peopleList.get(i).getLastName());
+				System.out.println(allPeople.peopleList.get(i).toString());
 			}
 
 			

@@ -11,16 +11,28 @@ public class Person {
 		private String firstName = "";
 		private String lastName = "";
 		private String middleName = "";
-		private int classYear;
 
-		public Person(String name) {
+		private String unix = "";
+		private String type = "";
+		private int classYear = -1;
+		private String homeTown = "";
+		private String homeState = "";
+		private String homeCountry = "";
+
+ // name, unix, type, homeTown, homeState, homeCountry
+
+
+		public Person(String name, String unix, String type, int classYear, String homeTown, String homeState, String homeCountry) {
 			this.fullName = name;
+			this.unix = unix;
+			this.type = type;
+			this.homeTown = homeTown;
+			this.homeState = homeState;
+			this.homeCountry = homeCountry;
+			this.classYear = classYear;
 
 
 			initializeFields();
-
-
-
 
 
 		}
@@ -126,8 +138,37 @@ public class Person {
 	}
 
 
+	public String getUnix() {
+		return unix;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public int getClassYear() {
+		return classYear;
+	}
+
+	public String getHomeTown() {
+		return homeTown;
+	}
+
+	public String getHomeState() {
+		return homeState;
+	}
+
+	public String getHomeCountry() {
+		return homeCountry;
+	}
+
+	public String toString() {
+		return "" + firstName + " " + middleName + " " + lastName + " | " + unix + " | " + type + " | " + classYear + " | " + homeTown + ", " + homeState + ", " + homeCountry;
+	}
+
+
 	public static void main(String[] args) {
-		Person john = new Person("John Smith");
+		//Person john = new Person("John Smith");
 
 
 	}

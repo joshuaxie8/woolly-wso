@@ -34,6 +34,7 @@ public class Trie<K, V> implements Tree<K, V> {
     }
 
     public ArrayList<V> getValues(Node node) {
+        if (node.values == null) return new ArrayList<V>();
         return node.values;
     }
 

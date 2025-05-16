@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.awt.BorderLayout;
+import java.awt.Font;
 import java.awt.event.*;  // only if needed
 
 // temporary graphic display
@@ -57,9 +58,17 @@ class Graphics extends JFrame {
         Set<Integer> matches = parent.findMatches(a);
 
         for (int i : matches) {
-            String s = parent.idToPerson.get(i).getFullName();
-            s += ", type = "; s += parent.idToPerson.get(i).getType();
-            suggestionModel.addElement(s);
+            StringBuilder s = new StringBuilder(parent.idToPerson.get(i).getFullName());
+            if (!parent.idToPerson.get(i).getHomeTown().equals("")) {
+                s.append(", hometown= "); s.append(parent.idToPerson.get(i).getHomeTown());
+            }
+            if (parent.idToPerson.get(i).getHomeCountry().equals("United States")) {
+                s.append(", "); s.append(parent.idToPerson.get(i).getHomeState());
+            }
+            if (!parent.idToPerson.get(i).getHomeCountry().equals("") && !parent.idToPerson.get(i).getHomeCountry().equals("United States")) {
+                s.append(", "); s.append(parent.idToPerson.get(i).getHomeCountry());
+            }
+            suggestionModel.addElement(s.toString());
         }
     }
 

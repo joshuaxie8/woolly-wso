@@ -49,7 +49,7 @@ class Graphics extends JFrame {
         if (a.isEmpty()) return;
 
         ArrayList<Integer> exactMatches = parent.t.traverseVals(parent.t.probe(a), a);
-        ArrayList<Integer> fuzzyMatches = parent.bk.fuzzyVals(a, Math.min(2, a.length() / 3), false);
+        ArrayList<Integer> fuzzyMatches = parent.bk.fuzzyVals(a, Math.min(2, a.length() / 3), false, true);
         Set<Integer> allMatches = new LinkedHashSet<>(exactMatches);
         allMatches.addAll(fuzzyMatches);
 

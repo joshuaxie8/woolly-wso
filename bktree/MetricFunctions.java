@@ -79,6 +79,16 @@ public class MetricFunctions {
 		}
 	};
 
+	// Length of shared prefix among two strings
+	// ex. commonPrefixLength("applesauce", "application") = 4
+	public static int commonPrefixLength(String a, String b) {
+	    int len = Math.min(a.length(), b.length());
+	    for (int i = 0; i < len; i++) {
+	        if (a.charAt(i) != b.charAt(i)) return i;
+	    }
+	    return len;
+	}
+
 	// testing
 	public static void main(String[] args) {
 		System.out.println(MetricFunctions.osa.compute("aaron", "araon"));

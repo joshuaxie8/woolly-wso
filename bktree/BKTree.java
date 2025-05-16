@@ -118,11 +118,57 @@ public class BKTree<K, V> implements Tree<K, V> {
 	Fuzzily searches for all stored nodes with values within a tolerance distance tol from the given key
 	If exactMatches is FALSE, does not add nodes where key is an exact match (distance = 0)
 	*/
-	private ArrayList<Node> fuzzy(K key, int tol, boolean exactMatches) {
+
+	// note: both fuzzy methods search by KEY only
+
+	// performs a fuzzy search on the BK tree, returning an array list of keys
+	// fuzzyKeys() is used primarily for testing
+	public ArrayList<K> fuzzyKeys(K key, int tol, boolean exactMatches, boolean sort) {
+		ArrayList<Node> results = fuzzy(key, tol, exactMatches, sort); // get results
+		ArrayList<K> keys = new ArrayList<>();
+		for (Node node : results) keys.add(node.key);
+		return keys;
+	}
+
+	// performs a fuzzy search on the BK tree, returning an array list of values
+	public ArrayList<V> fuzzyVals(K key, int tol, boolean exactMatches, boolean sort) {
+		ArrayList<Node> results = fuzzy(key, tol, exactMatches, sort); // get results
+		ArrayList<V> vals = new ArrayList<>();
+		for (Node node : results) vals.add(node.val);
+		return vals;
+	}
+
+	class ScoredNode {
+		Node node;
+		int score;
+		ScoredNode(Node node, int score) {
+			this.node = node;
+			this.score = score;
+		}
+	}
+	
+	private ArrayList<Node> fuzzy(K key, int tol, boolean exactMatches, boolean sort) {
 
 		ArrayList<Node> results = new ArrayList<>();
-
 		fuzzyHelper(root, key, tol, results, exactMatches);
+
+		if (sort) {
+			ArrayList<ScoredNode> scored = new ArrayList<>();
+			for (Node node : results) {
+				scored.add(new ScoredNode(node, Search.commonPrefixLength((String) node.key, (String) key)));
+			}
+			Collections.sort(scored, new Comparator<ScoredNode>() {
+			    @Override
+			    public int compare(ScoredNode a, ScoredNode b) {
+			        return Integer.compare(b.score, a.score);
+			    }
+			});
+			ArrayList<Node> sortedResults = new ArrayList<>();
+			for (ScoredNode sn : scored) {
+				sortedResults.add(sn.node);
+			}
+			return sortedResults;
+		}
 
 		return results;
 	}
@@ -144,25 +190,6 @@ public class BKTree<K, V> implements Tree<K, V> {
 				fuzzyHelper(currChild, key, tol, results, exactMatches);
 			}
 		}
-	}
-
-	// note: both fuzzy methods search by KEY only
-
-	// performs a fuzzy search on the BK tree, returning an array list of keys
-	// fuzzyKeys() is used primarily for testing
-	public ArrayList<K> fuzzyKeys(K key, int tol, boolean exactMatches) {
-		ArrayList<Node> results = fuzzy(key, tol, exactMatches); // get results
-		ArrayList<K> keys = new ArrayList<>();
-		for (Node node : results) keys.add(node.key);
-		return keys;
-	}
-
-	// performs a fuzzy search on the BK tree, returning an array list of values
-	public ArrayList<V> fuzzyVals(K key, int tol, boolean exactMatches) {
-		ArrayList<Node> results = fuzzy(key, tol, exactMatches); // get results
-		ArrayList<V> vals = new ArrayList<>();
-		for (Node node : results) vals.add(node.val);
-		return vals;
 	}
 
 	/*

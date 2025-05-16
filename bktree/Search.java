@@ -12,20 +12,45 @@ public class Search {
 	HashMap<Person, Integer> personToId = new HashMap<>(8192);
 	int id = 0;
 
+	BKTree<String, Integer> bkl;	// more stuff for demo
+	Trie<String, Integer> tl;
+	BKTree<String, Integer> bkht;
+	Trie<String, Integer> tht;
+
+	//MultiBKTree<Integer> mbk;
+	// to do: integrate multibktree
+
 	public Search(DistanceMetric<String> c) {
 		bk = new BKTree<String, Integer>(c);
 		t = new Trie<String, Integer>();
+
+		bkl = new BKTree<String, Integer>(c);
+		tl = new Trie<String, Integer>();
+		bkht = new BKTree<String, Integer>(c);
+		tht = new Trie<String, Integer>();
 
 		// initialization
 		for (Person person : p.peopleList) {
 			idToPerson.put(id, person);
 			personToId.put(person, id);
 
-			ArrayList<String> ar = simplify(person.getFirstName());
-			for (String s : ar) {
+			ArrayList<String> f = simplify(person.getFirstName());
+			ArrayList<String> l = simplify(person.getLastName());
+			ArrayList<String> ht = simplify(person.getHomeTown());
+			//keys[0] = ar.get(0);
+			for (String s : f) {
 				t.insert(s, id);
 				bk.insert(s, id);
 			}
+			for (String s : l) {
+				tl.insert(s, id);
+				bkl.insert(s, id);
+			}
+			for (String s : ht) {
+				tht.insert(s, id);
+				bkht.insert(s, id);
+			}
+
 			id++;
 		}
 	}
@@ -66,52 +91,76 @@ public class Search {
 		return results;
 	}
 
-	public static String getUserInput() {
-        Scanner scanner = new Scanner(System.in);
-        return scanner.nextLine();
-    }
 
-    public static int getUserInt() {
-        Scanner scanner = new Scanner(System.in);
-        while (!scanner.hasNextInt()) { scanner.nextLine(); }
-        return scanner.nextInt();
-    }
+	/**
+	 * MATCH FINDING
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
+	public Set<Integer> findMatches(String input) {
+		String[] fields = input.split(" ");
+		LinkedHashSet<Integer> matches = new LinkedHashSet<>();
+		if (fields.length == 1) { // no spaces - give first names priority
+			ArrayList<String> queries = simplify(fields[0]);
+			
+			for (String s : queries) { // exact first name matches
+				matches.addAll(t.traverseVals(t.probe(s), s));
+			}
+			for (String s : queries) { // exact last name matches
+				matches.addAll(tl.traverseVals(tl.probe(s), s));
+			}
+			for (String s : queries) { // fuzzy first name matches
+				matches.addAll(bk.fuzzyVals(s, Math.min(2, s.length() / 3), false, true));
+			}
+			for (String s : queries) { // fuzzy last name matches
+				matches.addAll(bkl.fuzzyVals(s, Math.min(2, s.length() / 3), false, true));
+			}
 
-	public static void main(String[] args) {
-		Search tests = new Search(MetricFunctions.osa);
+			if (matches.isEmpty()) {
+				for (String s : queries) {
+					matches.addAll(tht.traverseVals(tht.probe(s), s));
+					matches.addAll(bkht.fuzzyVals(s, Math.min(2, s.length() / 3), false, true));
+				}
+			}
 
-		// System.out.println(Search.simplify("José"));
-		// System.out.println(Search.simplify("J. B."));
+        	return matches;
+		}
+		else if (fields.length == 2) { // first name + last name
+			ArrayList<String> queries1 = simplify(fields[0]); // assume first name
+			ArrayList<String> queries2 = simplify(fields[1]); // assume last name
 
-		
+			Set<Integer> ef = new LinkedHashSet<>(); // exact first name matches
+			Set<Integer> el = new LinkedHashSet<>(); // exact last name matches
+			Set<Integer> ff = new LinkedHashSet<>(); // fuzzy first name matches
+			Set<Integer> fl = new LinkedHashSet<>(); // fuzzy last name matches
+			for (String s : queries1) {
+				ef.addAll(t.traverseVals(t.probe(s), s));
+				ff.addAll(bk.fuzzyVals(s, Math.min(2, s.length() / 3), false, true));
+			}
+			for (String s : queries2) {
+				el.addAll(tl.traverseVals(tl.probe(s), s));
+				fl.addAll(bkl.fuzzyVals(s, Math.min(2, s.length() / 3), false, true));
+			}
+			Set<Integer> a = new LinkedHashSet<>(ef); a.retainAll(el); // exact first + last  
+			Set<Integer> b = new LinkedHashSet<>(ef); b.retainAll(fl); // exact first + fuzzy last
+			Set<Integer> c = new LinkedHashSet<>(ff); c.retainAll(el); // fuzzy first + exact last
+			Set<Integer> d = new LinkedHashSet<>(ff); d.retainAll(fl); // fuzzy first + last
 
-		// while (true) {
-		// 	System.out.print("Enter a name: ");
-		// 	String a = getUserInput(); a = a.toLowerCase();
-		// 	System.out.print("Show results within __ characters: ");
-		// 	int d = getUserInt();
+			matches.addAll(a); matches.addAll(b); matches.addAll(c); matches.addAll(d);
 
-		// 	ArrayList<Integer> exactMatches = tests.t.traverseVals(tests.t.probe(a), a);
-		// 	System.out.println("Exact prefix matches: ");
-		// 	if (exactMatches.size() > 4) {
-		// 		for (int i = 0; i < 3; i++) {
-		// 			System.out.println(tests.idToPerson.get(i).getFullName());
-		// 		}
-		// 		System.out.print(exactMatches.size() - 3); System.out.println(" more results");
-		// 	}
-		// 	else {
-		// 		for (int i : exactMatches) {
-		// 			System.out.println(tests.idToPerson.get(i).getFullName());
-		// 		}
-		// 	}
-
-		// 	ArrayList<Integer> fuzzyMatches = tests.bk.fuzzyVals(a, d, false);
-
-		// 	// ArrayList<String> fuzzyMatches = tests.bk.searchData(a, d);
-		// 	System.out.println("Fuzzy matches: ");
-		// 	for (int i : fuzzyMatches) {
-		// 		System.out.println(tests.idToPerson.get(i).getFullName());
-		// 	}
-		// }
+			if (matches.isEmpty()) {
+				for (String s : simplify(input)) {
+					matches.addAll(tht.traverseVals(tht.probe(s), s));
+					matches.addAll(bkht.fuzzyVals(s, Math.min(2, s.length() / 3), false, true));
+				}
+			}
+			return matches;
+		}
+		return null;
 	}
+
 }
+
+

@@ -33,6 +33,10 @@ public class Trie<K, V> implements Tree<K, V> {
     	return size;
     }
 
+    public ArrayList<V> getValues(Node node) {
+        return node.values;
+    }
+
     public boolean insert(K key, V val) {
     	String word = "";
         if (key == null) return false;

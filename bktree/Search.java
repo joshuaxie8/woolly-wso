@@ -136,6 +136,7 @@ public class Search {
 			}
 		}
 		else if (fields.length == 2) { // first name + last name
+			ArrayList<String> full = simplify(input);
 			ArrayList<String> queries1 = simplify(fields[0]); // assume first name
 			ArrayList<String> queries2 = simplify(fields[1]); // assume last name
 
@@ -143,8 +144,11 @@ public class Search {
 			Set<Integer> el = new LinkedHashSet<>(); // exact last name matches
 			Set<Integer> ff = new LinkedHashSet<>(); // fuzzy first name matches
 			Set<Integer> fl = new LinkedHashSet<>(); // fuzzy last name matches
+
+			Set<Integer> ht = new LinkedHashSet<>(); // hometown matches
+
 			for (String s : queries1) {
-				ef.addAll(t.traverseVals(t.probe(s), s));
+				ef.addAll(t.getValues(t.probe(s)));
 				ff.addAll(bk.fuzzyVals(s, Math.min(2, s.length() / 3), false, true));
 			}
 			for (String s : queries2) {
@@ -160,10 +164,13 @@ public class Search {
 			matches.addAll(a); matches.addAll(b); matches.addAll(c); matches.addAll(d);
 
 			if (as + bs + cs == 0) { // trigger home town search if results are inadequate
-				matches.clear();
-				for (String s : simplify(input)) {
-					matches.addAll(tht.traverseVals(tht.probe(s), s));
-					matches.addAll(bkht.fuzzyVals(s, Math.min(2, s.length() / 3), false, true));
+				for (String s : full) {
+					ht.addAll(tht.traverseVals(tht.probe(s), s));
+					ht.addAll(bkht.fuzzyVals(s, Math.min(2, s.length() / 3), false, true));
+				}
+				if (ht.size() > ds) {
+					matches.clear();
+					matches.addAll(ht);
 				}
 			}
 		}

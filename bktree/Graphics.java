@@ -48,13 +48,18 @@ class Graphics extends JFrame {
         String a = inputField.getText().toLowerCase();
         if (a.isEmpty()) return;
 
-        ArrayList<Integer> exactMatches = parent.t.traverseVals(parent.t.probe(a), a);
-        ArrayList<Integer> fuzzyMatches = parent.bk.fuzzyVals(a, Math.min(2, a.length() / 3), false, true);
-        Set<Integer> allMatches = new LinkedHashSet<>(exactMatches);
-        allMatches.addAll(fuzzyMatches);
+        // ArrayList<Integer> exactMatches = parent.t.traverseVals(parent.t.probe(a), a);
+        // ArrayList<Integer> fuzzyMatches = parent.bk.fuzzyVals(a, Math.min(2, a.length() / 3), false, true);
+        // // ArrayList<Integer> fuzzyMatches = parent.mbk.fuzzyVals(a, Math.min(2, a.length() / 3), 0, false, true);
+        // Set<Integer> allMatches = new LinkedHashSet<>(exactMatches);
+        // allMatches.addAll(fuzzyMatches);
 
-        for (int i : allMatches) {
-            suggestionModel.addElement(parent.idToPerson.get(i).getFullName());
+        Set<Integer> matches = parent.findMatches(a);
+
+        for (int i : matches) {
+            String s = parent.idToPerson.get(i).getFullName();
+            s += ", type = "; s += parent.idToPerson.get(i).getType();
+            suggestionModel.addElement(s);
         }
     }
 

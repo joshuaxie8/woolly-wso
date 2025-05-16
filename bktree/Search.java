@@ -104,28 +104,32 @@ public class Search {
 		LinkedHashSet<Integer> matches = new LinkedHashSet<>();
 		if (fields.length == 1) { // no spaces - give first names priority
 			ArrayList<String> queries = simplify(fields[0]);
-			
+
+			Set<Integer> e = new LinkedHashSet<>(); // exact matches
+			Set<Integer> f = new LinkedHashSet<>(); // fuzzy matches
+
 			for (String s : queries) { // exact first name matches
-				matches.addAll(t.traverseVals(t.probe(s), s));
+				e.addAll(t.traverseVals(t.probe(s), s));
 			}
 			for (String s : queries) { // exact last name matches
-				matches.addAll(tl.traverseVals(tl.probe(s), s));
+				e.addAll(tl.traverseVals(tl.probe(s), s));
 			}
 			for (String s : queries) { // fuzzy first name matches
-				matches.addAll(bk.fuzzyVals(s, Math.min(2, s.length() / 3), false, true));
+				f.addAll(bk.fuzzyVals(s, Math.min(2, s.length() / 3), false, true));
 			}
 			for (String s : queries) { // fuzzy last name matches
-				matches.addAll(bkl.fuzzyVals(s, Math.min(2, s.length() / 3), false, true));
+				f.addAll(bkl.fuzzyVals(s, Math.min(2, s.length() / 3), false, true));
 			}
 
-			if (matches.isEmpty()) {
+			matches.addAll(e); matches.addAll(f);
+
+			if (e.size() == 0) { // trigger home town search
+				matches.clear();
 				for (String s : queries) {
 					matches.addAll(tht.traverseVals(tht.probe(s), s));
 					matches.addAll(bkht.fuzzyVals(s, Math.min(2, s.length() / 3), false, true));
 				}
 			}
-
-        	return matches;
 		}
 		else if (fields.length == 2) { // first name + last name
 			ArrayList<String> queries1 = simplify(fields[0]); // assume first name
@@ -147,18 +151,19 @@ public class Search {
 			Set<Integer> b = new LinkedHashSet<>(ef); b.retainAll(fl); // exact first + fuzzy last
 			Set<Integer> c = new LinkedHashSet<>(ff); c.retainAll(el); // fuzzy first + exact last
 			Set<Integer> d = new LinkedHashSet<>(ff); d.retainAll(fl); // fuzzy first + last
+			int as = a.size(), bs = b.size(), cs = c.size(), ds = d.size();
 
 			matches.addAll(a); matches.addAll(b); matches.addAll(c); matches.addAll(d);
 
-			if (matches.isEmpty()) {
+			if (as + bs + cs == 0) { // trigger home town search if results are inadequate
+				matches.clear();
 				for (String s : simplify(input)) {
 					matches.addAll(tht.traverseVals(tht.probe(s), s));
 					matches.addAll(bkht.fuzzyVals(s, Math.min(2, s.length() / 3), false, true));
 				}
 			}
-			return matches;
 		}
-		return null;
+		return matches;
 	}
 
 }

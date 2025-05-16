@@ -146,7 +146,7 @@ public class BKTree<K, V> implements Tree<K, V> {
 			this.score = score;
 		}
 	}
-	
+
 	private ArrayList<Node> fuzzy(K key, int tol, boolean exactMatches, boolean sort) {
 
 		ArrayList<Node> results = new ArrayList<>();
@@ -155,7 +155,7 @@ public class BKTree<K, V> implements Tree<K, V> {
 		if (sort) {
 			ArrayList<ScoredNode> scored = new ArrayList<>();
 			for (Node node : results) {
-				scored.add(new ScoredNode(node, Search.commonPrefixLength((String) node.key, (String) key)));
+				scored.add(new ScoredNode(node, MetricFunctions.commonPrefixLength((String) node.key, (String) key)));
 			}
 			Collections.sort(scored, new Comparator<ScoredNode>() {
 			    @Override

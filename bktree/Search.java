@@ -148,7 +148,7 @@ public class Search {
 			Set<Integer> ht = new LinkedHashSet<>(); // hometown matches
 
 			for (String s : queries1) {
-				ef.addAll(t.getValues(t.probe(s)));
+				ef.addAll(t.traverseVals(t.probe(s), s));
 				ff.addAll(bk.fuzzyVals(s, Math.min(2, s.length() / 3), false, true));
 			}
 			for (String s : queries2) {

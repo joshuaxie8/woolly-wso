@@ -88,6 +88,7 @@ public class BKTree<K, V> implements Tree<K, V> {
 	}
 
 	public boolean insert(K key, V val) {
+		if (key == null) return false;
 		Node node = new Node(key);
 		node.val = val;
 		return insert(node);

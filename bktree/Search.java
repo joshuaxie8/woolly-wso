@@ -107,6 +107,7 @@ public class Search {
 
 			Set<Integer> e = new LinkedHashSet<>(); // exact matches
 			Set<Integer> f = new LinkedHashSet<>(); // fuzzy matches
+			Set<Integer> ht = new LinkedHashSet<>(); // hometown matches
 
 			for (String s : queries) { // exact first name matches
 				e.addAll(t.traverseVals(t.probe(s), s));
@@ -124,10 +125,13 @@ public class Search {
 			matches.addAll(e); matches.addAll(f);
 
 			if (e.size() == 0) { // trigger home town search
-				matches.clear();
 				for (String s : queries) {
-					matches.addAll(tht.traverseVals(tht.probe(s), s));
-					matches.addAll(bkht.fuzzyVals(s, Math.min(2, s.length() / 3), false, true));
+					ht.addAll(tht.traverseVals(tht.probe(s), s));
+					ht.addAll(bkht.fuzzyVals(s, Math.min(2, s.length() / 3), false, true));
+				}
+				if (ht.size() > f.size()) {
+					matches.clear();
+					matches.addAll(ht);
 				}
 			}
 		}

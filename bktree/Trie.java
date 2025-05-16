@@ -35,6 +35,7 @@ public class Trie<K, V> implements Tree<K, V> {
 
     public boolean insert(K key, V val) {
     	String word = "";
+        if (key == null) return false;
     	if (key instanceof String) word = (String) key;             // turns key into a String
 
         int len = word.length(), asNum;

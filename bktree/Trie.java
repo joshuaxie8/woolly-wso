@@ -99,7 +99,6 @@ public class Trie<K, V> implements Tree<K, V> {
         traverseKeysHelper(new StringBuilder(s), start, result);
         return result;
     }
-
     private void traverseKeysHelper(StringBuilder sb, Node current, ArrayList<String> result) {
         if (current.isTerminal) {
         	result.add(sb.toString());
@@ -118,7 +117,6 @@ public class Trie<K, V> implements Tree<K, V> {
         traverseValsHelper(new StringBuilder(s), start, result);
         return result;
     }
-
     private void traverseValsHelper(StringBuilder sb, Node current, ArrayList<V> result) {
         if (current.isTerminal) { // every terminal node has at least one value, and all values are stored in terminal nodes
             result.addAll(current.values);

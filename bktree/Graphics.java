@@ -3,35 +3,51 @@ package bktree;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashSet;
+import javax.swing.table.*;
+import java.awt.*;
 import java.util.Set;
-import java.awt.BorderLayout;
-import java.awt.Font;
-import java.awt.event.*;  // only if needed
-
-// temporary graphic display
 
 class Graphics extends JFrame {
 
     private JTextField inputField;
-    private DefaultListModel<String> suggestionModel;
-    private JList<String> suggestionList;
+    private DefaultTableModel tableModel;
+    private JTable suggestionTable;
     Search parent;
 
     public Graphics(Search parent) {
         this.parent = parent;
-        setTitle("WSO Mockup");
-        setSize(600, 400);
+        setTitle("WSO Search Temp Graphics - Joshua Xie and Aaron Anidjar");
+        setSize(700, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
         inputField = new JTextField();
-        suggestionModel = new DefaultListModel<>();
-        suggestionList = new JList<>(suggestionModel);
+        inputField.setFont(new Font("SansSerif", Font.PLAIN, 16));
+
+        String[] columnNames = { "Name", "Williams Username", "Home Town" };
+        tableModel = new DefaultTableModel(columnNames, 0);
+        suggestionTable = new JTable(tableModel) {
+            // Alternate row colors
+            public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+                Component c = super.prepareRenderer(renderer, row, column);
+                if (!isRowSelected(row)) {
+                    c.setBackground(row % 2 == 0 ? Color.WHITE : new Color(245, 245, 245));
+                } else {
+                    c.setBackground(getSelectionBackground());
+                }
+                return c;
+            }
+        };
+
+        suggestionTable.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        suggestionTable.setRowHeight(28);
+        suggestionTable.setFillsViewportHeight(true);
+
+        // Style header
+        JTableHeader header = suggestionTable.getTableHeader();
+        header.setBackground(new Color(102, 51, 153));
+        header.setForeground(Color.WHITE);
+        header.setFont(new Font("SansSerif", Font.BOLD, 14));
 
         inputField.getDocument().addDocumentListener(new DocumentListener() {
             public void insertUpdate(DocumentEvent e) { updateSuggestions(); }
@@ -40,35 +56,22 @@ class Graphics extends JFrame {
         });
 
         add(inputField, BorderLayout.NORTH);
-        add(new JScrollPane(suggestionList), BorderLayout.CENTER);
+        add(new JScrollPane(suggestionTable), BorderLayout.CENTER);
     }
 
     private void updateSuggestions() {
-        suggestionModel.clear();
+        tableModel.setRowCount(0); // Clear table
 
         String a = inputField.getText().toLowerCase();
         if (a.isEmpty()) return;
 
-        // ArrayList<Integer> exactMatches = parent.t.traverseVals(parent.t.probe(a), a);
-        // ArrayList<Integer> fuzzyMatches = parent.bk.fuzzyVals(a, Math.min(2, a.length() / 3), false, true);
-        // // ArrayList<Integer> fuzzyMatches = parent.mbk.fuzzyVals(a, Math.min(2, a.length() / 3), 0, false, true);
-        // Set<Integer> allMatches = new LinkedHashSet<>(exactMatches);
-        // allMatches.addAll(fuzzyMatches);
-
         Set<Integer> matches = parent.findMatches(a);
 
         for (int i : matches) {
-            StringBuilder s = new StringBuilder(parent.idToPerson.get(i).getFullName());
-            if (!parent.idToPerson.get(i).getHomeTown().equals("")) {
-                s.append(", hometown= "); s.append(parent.idToPerson.get(i).getHomeTown());
-            }
-            if (parent.idToPerson.get(i).getHomeCountry().equals("United States")) {
-                s.append(", "); s.append(parent.idToPerson.get(i).getHomeState());
-            }
-            if (!parent.idToPerson.get(i).getHomeCountry().equals("") && !parent.idToPerson.get(i).getHomeCountry().equals("United States")) {
-                s.append(", "); s.append(parent.idToPerson.get(i).getHomeCountry());
-            }
-            suggestionModel.addElement(s.toString());
+            String name = parent.idToPerson.get(i).getFullName();
+            String username = parent.idToPerson.get(i).getUnix();  
+            String homeTown = parent.idToPerson.get(i).getHomeTown(); 
+            tableModel.addRow(new Object[]{name, username, homeTown});
         }
     }
 

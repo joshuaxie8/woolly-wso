@@ -124,6 +124,12 @@ public class Search {
 
 			matches.addAll(e); matches.addAll(f);
 
+			// Add all exact home town matches as well:
+			for (String s : queries) {
+				ht.addAll(tht.traverseVals(tht.probe(s), s));
+				matches.addAll(ht);
+			}
+
 			if (e.size() == 0) { // trigger home town search
 				for (String s : queries) {
 					ht.addAll(tht.traverseVals(tht.probe(s), s));
@@ -162,6 +168,12 @@ public class Search {
 			int as = a.size(), bs = b.size(), cs = c.size(), ds = d.size();
 
 			matches.addAll(a); matches.addAll(b); matches.addAll(c); matches.addAll(d);
+
+			// Add all exact home town matches at the end as well:
+			for (String s : full) {
+				ht.addAll(tht.traverseVals(tht.probe(s), s));
+				matches.addAll(ht);
+			}
 
 			if (as + bs + cs == 0) { // trigger home town search if results are inadequate
 				for (String s : full) {

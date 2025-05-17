@@ -76,9 +76,9 @@ public class People {
 
 			People allPeople = new People();
 
-			for (int i = 0; i < allPeople.peopleList.size(); i++) {
-				System.out.println(allPeople.peopleList.get(i).toString());
-			}
+			// for (int i = 0; i < allPeople.peopleList.size(); i++) {
+			// 	System.out.println(allPeople.peopleList.get(i).toString());
+			// }
 
 			
 		}

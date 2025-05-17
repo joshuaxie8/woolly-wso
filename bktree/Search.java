@@ -107,7 +107,8 @@ public class Search {
 
 			Set<Integer> e = new LinkedHashSet<>(); // exact matches
 			Set<Integer> f = new LinkedHashSet<>(); // fuzzy matches
-			Set<Integer> ht = new LinkedHashSet<>(); // hometown matches
+			Set<Integer> ht_exact = new LinkedHashSet<>(); // hometown exact matches
+			Set<Integer> ht_fuzzy = new LinkedHashSet<>(); // hometown fuzzy matches
 
 			for (String s : queries) { // exact first name matches
 				e.addAll(t.traverseVals(t.probe(s), s));
@@ -124,22 +125,19 @@ public class Search {
 
 			matches.addAll(e); matches.addAll(f);
 
-			// Add all exact home town matches as well:
+
+			
 			for (String s : queries) {
-				ht.addAll(tht.traverseVals(tht.probe(s), s));
-				matches.addAll(ht);
+				ht_exact.addAll(tht.traverseVals(tht.probe(s), s));
+				ht_fuzzy.addAll(bkht.fuzzyVals(s, Math.min(2, s.length() / 3), false, true));
 			}
 
-			if (e.size() == 0) { // trigger home town search
-				for (String s : queries) {
-					ht.addAll(tht.traverseVals(tht.probe(s), s));
-					ht.addAll(bkht.fuzzyVals(s, Math.min(2, s.length() / 3), false, true));
-				}
-				if (ht.size() > f.size()) {
-					matches.clear();
-					matches.addAll(ht);
-				}
+			if (((ht_exact.size() * 5) + (ht_fuzzy.size() * .2)) > f.size()) { // weighting home town exact at 5 times and then ht fuzzy at .2 times;
+				matches.clear();
+				matches.addAll(ht_exact);
+				matches.addAll(ht_fuzzy);
 			}
+			
 		}
 		else if (fields.length == 2) { // first name + last name
 			ArrayList<String> full = simplify(input);
@@ -169,11 +167,7 @@ public class Search {
 
 			matches.addAll(a); matches.addAll(b); matches.addAll(c); matches.addAll(d);
 
-			// Add all exact home town matches at the end as well:
-			for (String s : full) {
-				ht.addAll(tht.traverseVals(tht.probe(s), s));
-				matches.addAll(ht);
-			}
+
 
 			if (as + bs + cs == 0) { // trigger home town search if results are inadequate
 				for (String s : full) {

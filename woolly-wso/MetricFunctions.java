@@ -1,4 +1,4 @@
-package bktree;
+package woollywso;
 
 import java.util.*;
 
@@ -91,10 +91,9 @@ public class MetricFunctions {
 
 	// testing
 	public static void main(String[] args) {
-		System.out.println(MetricFunctions.osa.compute("aaron", "araon"));
-		System.out.println(MetricFunctions.osa.compute("aaaron", "aaron"));
-		System.out.println(MetricFunctions.osa.compute("aaron", "aaaron"));
-		System.out.println(MetricFunctions.osa.compute("aaron", "baron"));
+		System.out.println(MetricFunctions.osa.compute("aaron", "arrow"));
+		System.out.println(MetricFunctions.osa.compute("katie", "kate"));
+		System.out.println(MetricFunctions.osa.compute("mono", "moon"));
 
 
 	}

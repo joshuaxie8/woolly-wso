@@ -1,4 +1,4 @@
-package bktree;
+package woollywso;
 
 import java.util.*; 
 import java.io.*; 
@@ -14,7 +14,7 @@ public class People {
 
 		public void injestData() {
 			try {
-				String filePath = "bktree/data.csv";
+				String filePath = "woolly-wso/data.csv";
 				File file = new File(filePath);
 				Scanner scanner = new Scanner(file);
 

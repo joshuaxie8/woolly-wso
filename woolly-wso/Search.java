@@ -5,7 +5,7 @@ import java.text.Normalizer;
 
 // this is our main file
 public class Search {
-	People p = new People();	// automatically ingests people
+	People p;	// automatically ingests people
 	BKTree<String, Integer> bk; 	// bk tree!
 	Trie<String, Integer> t;		// trie!
 	HashMap<Integer, Person> idToPerson = new HashMap<>(8192);
@@ -20,7 +20,8 @@ public class Search {
 	//MultiBKTree<Integer> mbk;
 	// to do: integrate multibktree
 
-	public Search(DistanceMetric<String> c) {
+	public Search(DistanceMetric<String> c, String filePath) {
+		p = new People(filePath);
 		bk = new BKTree<String, Integer>(c);
 		t = new Trie<String, Integer>();
 

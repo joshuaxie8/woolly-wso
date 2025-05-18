@@ -8,15 +8,16 @@ public class People {
 		public ArrayList<Person> peopleList = new ArrayList<>();
 
 
-		public People() {
-			injestData();
+		public People(String filePath) {
+			injestData(filePath);
 		}
 
-		public void injestData() {
+		public void injestData(String fp) {
 			try {
-				String filePath = "woolly-wso/data.csv";
+				String filePath = fp;
 				File file = new File(filePath);
 				Scanner scanner = new Scanner(file);
+				scanner.nextLine();
 
 				while (scanner.hasNextLine()) {
 
@@ -74,7 +75,7 @@ public class People {
 
 		public static void main (String[] args) {
 
-			People allPeople = new People();
+			People allPeople = new People("woolly-wso/dummy-data.csv");
 
 			// for (int i = 0; i < allPeople.peopleList.size(); i++) {
 			// 	System.out.println(allPeople.peopleList.get(i).toString());

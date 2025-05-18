@@ -85,7 +85,7 @@ class Graphics extends JFrame {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            new Graphics(new Search(MetricFunctions.osa)).setVisible(true);
+            new Graphics(new Search(MetricFunctions.osa, "woolly-wso/dummy-data.csv")).setVisible(true);
         });
     }
 }

@@ -101,6 +101,7 @@ public class Search {
 	 */
 	public Set<Integer> findMatches(String input) {
 		String[] fields = input.split(" ");
+		System.out.println("FIELDS: " + fields);
 		LinkedHashSet<Integer> matches = new LinkedHashSet<>();
 		if (fields.length == 1) { // no spaces - give first names priority
 			ArrayList<String> queries = simplify(fields[0]);
@@ -132,7 +133,7 @@ public class Search {
 				ht_fuzzy.addAll(bkht.fuzzyVals(s, Math.min(2, s.length() / 3), false, true));
 			}
 
-			if (((ht_exact.size() * 5) + (ht_fuzzy.size() * .2)) > f.size()) { // weighting home town exact at 5 times and then ht fuzzy at .2 times;
+			if (((ht_exact.size() * 5)) > matches.size()) { // weighting home town exact at 5 times and then ht fuzzy at .2 times
 				matches.clear();
 				matches.addAll(ht_exact);
 				matches.addAll(ht_fuzzy);
@@ -149,7 +150,8 @@ public class Search {
 			Set<Integer> ff = new LinkedHashSet<>(); // fuzzy first name matches
 			Set<Integer> fl = new LinkedHashSet<>(); // fuzzy last name matches
 
-			Set<Integer> ht = new LinkedHashSet<>(); // hometown matches
+			Set<Integer> ht_exact = new LinkedHashSet<>(); // hometown exact matches
+			Set<Integer> ht_fuzzy = new LinkedHashSet<>(); // hometown fuzzy matches
 
 			for (String s : queries1) {
 				ef.addAll(t.traverseVals(t.probe(s), s));
@@ -169,16 +171,18 @@ public class Search {
 
 
 
-			if (as + bs + cs == 0) { // trigger home town search if results are inadequate
-				for (String s : full) {
-					ht.addAll(tht.traverseVals(tht.probe(s), s));
-					ht.addAll(bkht.fuzzyVals(s, Math.min(2, s.length() / 3), false, true));
-				}
-				if (ht.size() > ds) {
-					matches.clear();
-					matches.addAll(ht);
-				}
+			for (String s : full) {
+				ht_exact.addAll(tht.traverseVals(tht.probe(s), s));
+				ht_fuzzy.addAll(bkht.fuzzyVals(s, Math.min(2, s.length() / 3), false, true));
 			}
+
+
+			if (((ht_exact.size() * 5) + (ht_fuzzy.size() * .2)) > matches.size()) {
+				matches.clear();
+				matches.addAll(ht_exact);
+				matches.addAll(ht_fuzzy);
+			}
+			
 		}
 		return matches;
 	}

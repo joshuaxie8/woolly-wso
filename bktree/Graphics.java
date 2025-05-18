@@ -70,7 +70,15 @@ class Graphics extends JFrame {
         for (int i : matches) {
             String name = parent.idToPerson.get(i).getFullName();
             String username = parent.idToPerson.get(i).getUnix();  
-            String homeTown = parent.idToPerson.get(i).getHomeTown(); 
+            String homeTown = parent.idToPerson.get(i).getHomeTown();
+            if (!homeTown.equals("")) {
+                if (!parent.idToPerson.get(i).getHomeState().equals("")) {
+                    homeTown += ", " + parent.idToPerson.get(i).getHomeState();
+                }
+                if (!(parent.idToPerson.get(i).getHomeCountry().equals("") || parent.idToPerson.get(i).getHomeCountry().equals("United States"))) {
+                     homeTown += ", " + parent.idToPerson.get(i).getHomeCountry();
+                }
+            }
             tableModel.addRow(new Object[]{name, username, homeTown});
         }
     }

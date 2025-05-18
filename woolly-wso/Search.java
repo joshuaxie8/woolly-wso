@@ -1,4 +1,4 @@
-package bktree;
+package woollywso;
 
 import java.util.*;
 import java.text.Normalizer;

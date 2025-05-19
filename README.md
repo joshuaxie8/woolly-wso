@@ -10,6 +10,8 @@ We store information using a combination of BK-trees and modified tries, enablin
 
 Upon running the program, the user will be prompted by a window with a search bar, mimicking the current version of the WSO Facebook. From there, they are able to search for people currently at Williams College by their name and hometown. Results are shown based on their similarity to the search query, with exact matches on top.
 
+![Example of UI, with user query 'john' on the dummy csv](https://github.com/joshuaxie8/cs136-jx4-aa37-final/blob/main/figs/ui.png?raw=true)
+
 Currently, the search is somewhat rudimentary, with support for up to two space-separated fields. We hope to further develop this logic, enabling multiple search fields within the same line, more filter types (e.g. country, major, class year) as well as implementing the search labels supported by the current WSO Facebook.
 ## Implementation
 

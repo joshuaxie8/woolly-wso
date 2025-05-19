@@ -154,7 +154,7 @@ public class Search {
 
 			*/
 
-			if (((ht_exact.size() * 5)) > matches.size()) { 
+			if (((ht_exact.size() * 5)) > ((e.size() * 6) + (f.size() * .5))) { 
 				matches.clear();
 				matches.addAll(ht_exact);
 				matches.addAll(ht_fuzzy);

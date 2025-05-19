@@ -178,7 +178,7 @@ public class BKTree<K, V> implements Tree<K, V> {
 			return;
 		}
 
-		int dist = c.compute(node.key, key);
+		int dist = c.lazyCompute(node.key, key, tol);
 
 		if (dist <= tol && (dist != 0 || exactMatches)) {
 			results.add(node); // adds the node if key distance is within range

@@ -6,7 +6,6 @@ public class MetricFunctions {
 
 	// Levenshtein distance
 	// Runs in O(m*n) where m and n are the lengths of a and b
-	// not used; deprecated
 	public static DistanceMetric<String> lev = new DistanceMetric<String>() {
 		public int compute(String a, String b) {
 			a = a.toLowerCase();
@@ -37,10 +36,6 @@ public class MetricFunctions {
 			}
 			return d1[n];
 		}
-
-		public int lazyCompute(String a, String b, int threshold) {
-			return 0; // not implemented
-		}
 	};
 
 	// Damerau-Levenshtein distance methods
@@ -49,16 +44,8 @@ public class MetricFunctions {
 	// Only adjacent transpositions are allowed
 	public static DistanceMetric<String> osa = new DistanceMetric<String>() {
 		public int compute(String a, String b) {
-			return lazyCompute(a, b, Math.max(a.length(), b.length()));
-		}
-
-		// terminates early if no cell in a row stores a distance within a given threshold
-		// if terminating, then returns threshold + 1
-		public int lazyCompute(String a, String b, int threshold) {
 			int m = a.length();
 			int n = b.length();
-
-			if (Math.abs(m - n) > threshold) return threshold + 1;
 
 			if (m == 0) return n;
 			if (n == 0) return m;
@@ -70,7 +57,6 @@ public class MetricFunctions {
 			Arrays.setAll(d1, i -> i); // d1 = {0, 1, 2, ... , n};
 
 			for (int i = 0; i < m; i++) {
-				int rowMin = threshold + 1; // current minimum value in the row
 				d2[0] = i + 1;
 
 				for (int j = 0; j < n; j++) {
@@ -83,11 +69,7 @@ public class MetricFunctions {
 					if (i > 0 && j > 0 && a.charAt(i) == b.charAt(j - 1) && a.charAt(i - 1) == b.charAt(j)) {
 						d2[j + 1] = Math.min(d2[j + 1], d0[j - 1] + 1);
 					}
-
-					rowMin = Math.min(d2[j + 1], rowMin); // update minimum
 				}
-				if (rowMin > threshold) return threshold + 1;
-
 				int[] temp = d0;
 				d0 = d1;
 				d1 = d2;

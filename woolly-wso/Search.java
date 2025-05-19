@@ -106,7 +106,11 @@ public class Search {
 		LinkedHashSet<Integer> matches = new LinkedHashSet<>();
 
 
-		if (fields.length == 1) { // no spaces - give first names priority
+		
+		if (fields.length == 0) {
+			// do nothing
+
+		} else if (fields.length == 1) { // no spaces - give first names priority
 			ArrayList<String> queries = simplify(fields[0]);
 
 			Set<Integer> e = new LinkedHashSet<>(); // exact matches
@@ -157,7 +161,14 @@ public class Search {
 			}
 			
 		}
-		else if (fields.length == 2) { // first name + last name
+
+		/*
+			* Currently this program is only implemented for two fields (meaning that after two spaces the rest of the input is ignored)
+			* We were working on expanding it fully but we don't have enough time to complete it before the project deadline :(
+
+		*/
+
+		else { // first name + last name
 			ArrayList<String> full = simplify(input);
 			ArrayList<String> queries1 = simplify(fields[0]); // assume first name
 			ArrayList<String> queries2 = simplify(fields[1]); // assume last name

@@ -75,7 +75,7 @@ public class People {
 
 		public static void main (String[] args) {
 
-			People allPeople = new People("woolly-wso/dummy-data.csv");
+			People allPeople = new People("woolly-wso/data.csv");
 
 			// for (int i = 0; i < allPeople.peopleList.size(); i++) {
 			// 	System.out.println(allPeople.peopleList.get(i).toString());

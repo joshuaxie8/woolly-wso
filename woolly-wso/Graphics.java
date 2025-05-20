@@ -116,7 +116,7 @@ class Graphics extends JFrame {
                 if (query.isEmpty() || matches == null) return;
 
                 for (int i : matches) {
-                    var person = parent.idToPerson.get(i);
+                    Person person = parent.idToPerson.get(i);
                     String name = person.getFullName();
                     String unix = person.getUnix();
                     String homeTown = person.getHomeTown();
@@ -139,7 +139,7 @@ class Graphics extends JFrame {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() ->
-            new Graphics(new Search(MetricFunctions.osa, "woolly-wso/data.csv")).setVisible(true)
+            new Graphics(new Search(MetricFunctions.osa, "woolly-wso/dummy-data.csv")).setVisible(true)
         );
     }
 }
